@@ -1,0 +1,50 @@
+-------------------------------------------------------------------------
+THIS NOTICE APPLIES TO ALL FILES CONTAINED IN THIS AND UNDERLYING FOLDERS
+-------------------------------------------------------------------------
+
+   uws - A client for UWS IVOA services
+   Copyright (c) 2013 Adrian M. Partl <apartl@aip.de>, 
+                      AIP E-Science (www.aip.de)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
+
+texttable <http://foutaise.org/code/texttable/texttable>
+--------------------------------------------------------
+
+texttable - module for creating simple ASCII tables
+Copyright (C) 2003-2011 Gerome Fournier <jef(at)foutaise.org>
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+
+argparse <http://code.google.com/p/argparse/>
+---------------------------------------------
+
+argparse is (c) 2006-2009 Steven J. Bethard <steven.bethard@gmail.com>.
+
+The argparse module was contributed to Python as of Python 2.7 and thus
+was licensed under the Python license. Same license applies to all files in
+the argparse package project.
+
+For details about the Python License, please see doc/Python-License.txt.
