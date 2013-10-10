@@ -7,7 +7,7 @@ from UWS import connection as UWSconnection
 from UWS import base as UWSbase
 
 def main():
-    UWSconn = UWSconnection.connection("http://escience.aip.de/multidark2/uws/query", "admin", "xxxxxxxx")
+    UWSconn = UWSconnection.connection("http://escience.aip.de/daiquiri/uws/query", "admin", "xxxxxxxx")
     UWS = UWSbase.base(UWSconn)
 
     jobs = UWS.getJobList()
