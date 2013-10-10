@@ -1,5 +1,5 @@
-from UWS import connection as UWSconn
-from UWS import models as UWSmodels
+import connection as UWSconn
+import models as UWSmodels
 import sys
 
 
