@@ -8,8 +8,8 @@ sys.path.insert(0, os.path.join(
 from UWS import connection as UWSconnection
 from UWS import base as UWSbase
 #from lib import texttable as tt
-import terminalsize as console
-import texttable as tt
+from terminalsize import terminalsize as console
+from texttable import texttable as tt
 from argparse import argparse
 
 def listJobs(url, usr, pwd, bitmask):
