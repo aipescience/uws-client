@@ -38,7 +38,11 @@ class connection:
             raise RuntimeError('Wrong protocol specified')
 
     def get(self, path):
-        self.conn.request("GET", self.basePath + '/' + path, headers=self.headers)
+        if(path == ""):
+            self.conn.request("GET", self.basePath, headers=self.headers)
+        else:
+            self.conn.request("GET", self.basePath + '/' + path, headers=self.headers)
+
         res = self.conn.getresponse()
 
         if res.status == 302:
