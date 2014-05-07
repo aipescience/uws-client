@@ -58,7 +58,10 @@ class connection:
             return self.get(path)
 
         if res.status == 403:
-            raise RuntimeError('No permission to access this resource (or it does not exist)')
+            raise RuntimeError('No permission to access this resource')
+
+        if res.status == 404:
+            raise RuntimeError('Resource does not exist')
 
         if res.status != 200:
             raise RuntimeError('Error while connection to server: Got response: %s %s' % (res.status, res.reason))
@@ -91,7 +94,10 @@ class connection:
             return self.get(path)
 
         if res.status == 403:
-            raise RuntimeError('No permission to access this resource (or it does not exist)')
+            raise RuntimeError('No permission to access this resource')
+
+        if res.status == 404:
+            raise RuntimeError('Resource does not exist')
 
         if res.status != 200:
             raise RuntimeError('Error while connection to server: Got response: %s %s' % (res.status, res.reason))
@@ -121,7 +127,10 @@ class connection:
             return self.get(path)
 
         if res.status == 403:
-            raise RuntimeError('No permission to access this resource (or it does not exist)')
+            raise RuntimeError('No permission to access this resource')
+
+        if res.status == 404:
+            raise RuntimeError('Resource does not exist')
 
         if res.status != 200:
             raise RuntimeError('Error while connection to server: Got response: %s %s' % (res.status, res.reason))
