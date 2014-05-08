@@ -57,6 +57,12 @@ class connection:
 
             return self.get(path)
 
+        if res.status == 400:
+            raise RuntimeError('Resource responded with bad request')
+
+        if res.status == 401:
+            raise RuntimeError('You are not authorized to access this resource')
+
         if res.status == 403:
             raise RuntimeError('No permission to access this resource')
 
@@ -93,6 +99,12 @@ class connection:
             path = location.replace(self.url, '').lstrip("/")
             return self.get(path)
 
+        if res.status == 400:
+            raise RuntimeError('Resource responded with bad request')
+
+        if res.status == 401:
+            raise RuntimeError('You are not authorized to access this resource')
+
         if res.status == 403:
             raise RuntimeError('No permission to access this resource')
 
@@ -125,6 +137,12 @@ class connection:
             location = res.getheader("location")
             path = location.replace(self.url, '').lstrip("/")
             return self.get(path)
+
+        if res.status == 400:
+            raise RuntimeError('Resource responded with bad request')
+
+        if res.status == 401:
+            raise RuntimeError('You are not authorized to access this resource')
 
         if res.status == 403:
             raise RuntimeError('No permission to access this resource')

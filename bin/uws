@@ -7,16 +7,27 @@ sys.path.insert(0, os.path.join(
 
 from UWS import connection as UWSconnection
 from UWS import base as UWSbase
+from UWS.base import UWSerror
 #from lib import texttable as tt
 from terminalsize import terminalsize as console
 from texttable import texttable as tt
 from argparse import argparse
 
+debug = False
+
 def listJobs(url, usr, pwd, bitmask):
 	UWSconn = UWSconnection.connection(url, usr, pwd)
 	UWS = UWSbase.base(UWSconn)
 
-	jobs = UWS.getJobList()
+	try:
+		jobs = UWS.getJobList()
+	except UWSerror, e:
+		if debug == False:
+			print "An error occurred:\n   %s" % e.msg
+			return
+		else:
+			print e.raw
+			raise
 
 	rows = [["ID", "Job name", "Status"]]
 	for job in jobs.jobref:
@@ -76,18 +87,45 @@ def _registerJobrefForTable(rows, job):
 def showJob(url, usr, pwd, id):
 	UWSconn = UWSconnection.connection(url, usr, pwd)
 	UWS = UWSbase.base(UWSconn)
-	job = UWS.getJob(id)
+
+	try:
+		job = UWS.getJob(id)
+	except UWSerror, e:
+		if debug == False:
+			print "An error occurred:\n   %s" % e.msg
+			return
+		else:
+			print e.raw
+			raise
 
 	_printJob(job)
 
 def newJob(url, usr, pwd, params={}, run=False):
 	UWSconn = UWSconnection.connection(url, usr, pwd)
 	UWS = UWSbase.base(UWSconn)
-	job = UWS.newJob(params)
+
+	try:
+		job = UWS.newJob(params)
+	except UWSerror, e:
+		if debug == False:
+			print "An error occurred:\n   %s" % e.msg
+			return
+		else:
+			print e.raw
+			raise
+
 
 	if run == True:
 		#execute the job
-		job = UWS.runJob(job.jobId)
+		try:
+			job = UWS.runJob(job.jobId)
+		except UWSerror, e:
+			if debug == False:
+				print "An error occurred:\n   %s" % e.msg
+				return
+			else:
+				print e.raw
+				raise
 
 	(conWidth, conHeight) = console.get_terminal_size()
 
@@ -105,9 +143,25 @@ def setParamsJob(url, usr, pwd, id, params={}):
 	UWS = UWSbase.base(UWSconn)
 
 	if len(params) == 0:
-		job = UWS.getJob(id)
+		try:
+			job = UWS.getJob(id)
+		except UWSerror, e:
+			if debug == False:
+				print "An error occurred:\n   %s" % e.msg
+				return
+			else:
+				print e.raw
+				raise
 	else:
-		job = UWS.setParamsJob(id, params)
+		try:
+			job = UWS.setParamsJob(id, params)
+		except UWSerror, e:
+			if debug == False:
+				print "An error occurred:\n   %s" % e.msg
+				return
+			else:
+				print e.raw
+				raise
 
 	_printJob(job)
 
@@ -115,21 +169,45 @@ def setParamsJob(url, usr, pwd, id, params={}):
 def runJob(url, usr, pwd, id):
 	UWSconn = UWSconnection.connection(url, usr, pwd)
 	UWS = UWSbase.base(UWSconn)
-	job = UWS.runJob(id)
+	try:
+		job = UWS.runJob(id)
+	except UWSerror, e:
+		if debug == False:
+			print "An error occurred:\n   %s" % e.msg
+			return
+		else:
+			print e.raw
+			raise
 
 	_printJob(job)
 
 def abortJob(url, usr, pwd, id):
 	UWSconn = UWSconnection.connection(url, usr, pwd)
 	UWS = UWSbase.base(UWSconn)
-	job = UWS.abortJob(id)
+	try:
+		job = UWS.abortJob(id)
+	except UWSerror, e:
+		if debug == False:
+			print "An error occurred:\n   %s" % e.msg
+			return
+		else:
+			print e.raw
+			raise
 
 	_printJob(job)
 
 def deleteJob(url, usr, pwd, id):
 	UWSconn = UWSconnection.connection(url, usr, pwd)
 	UWS = UWSbase.base(UWSconn)
-	success = UWS.deleteJob(id)
+	try:
+		success = UWS.deleteJob(id)
+	except UWSerror, e:
+		if debug == False:
+			print "An error occurred:\n   %s" % e.msg
+			return
+		else:
+			print e.raw
+			raise
 
 	if success == True:
 		print "Job %s successfully deleted!" % (id)
@@ -146,7 +224,15 @@ def resultsJob(url, usr, pwd, id):
 
 	UWSconn = UWSconnection.connection(url, usr, pwd)
 	UWS = UWSbase.base(UWSconn)
-	job = UWS.getJob(id)
+	try:
+		job = UWS.getJob(id)
+	except UWSerror, e:
+		if debug == False:
+			print "An error occurred:\n   %s" % e.msg
+			return
+		else:
+			print e.raw
+			raise
 
 	for result in job.results:
 		filename = result.id + ".dat"
@@ -228,6 +314,7 @@ if __name__ == '__main__':
 	parser.add_argument('-H', '--host', help='URL to UWS service', required=True)
 	parser.add_argument('-U', '--user', help='user name')
 	parser.add_argument('-P', '--pwd', help='password')
+	parser.add_argument('-D', '--dbg', action='store_true', help='debug mode')
 
 	subparsers = parser.add_subparsers(dest='command', help='commands for UWS')
 
@@ -277,6 +364,9 @@ if __name__ == '__main__':
 	parser_job_results.add_argument('id', help='job id')
 
 	args = parser.parse_args()
+
+	if args.dbg == True:
+		debug = True
 
 	if args.command == "list":
 		bitmask = 0

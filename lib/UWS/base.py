@@ -1,5 +1,7 @@
 import connection as UWSconn
 import models as UWSmodels
+from lxml.etree import XMLSyntaxError as XMLSyntaxError
+
 import sys
 
 
@@ -8,38 +10,119 @@ class base:
         self.conn = connection
 
     def getJobList(self):
-        res = self.conn.get('')
+        try:
+            res = self.conn.get('')
+        except RuntimeError, e:
+            raise UWSerror(str(e))
+
         raw = res.read()
-        jobList = UWSmodels.jobs(raw)
+
+        try:
+            jobList = UWSmodels.jobs(raw)
+        except XMLSyntaxError, e:
+            raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
+        except Exception, e:
+            raise e
+
         return jobList
 
     def getJob(self, id):
-        res = self.conn.get(id)
+        try:
+            res = self.conn.get(id)
+        except RuntimeError, e:
+            raise UWSerror(str(e))
+
         raw = res.read()
-        return UWSmodels.job(raw)
+        try:
+            result = UWSmodels.job(raw)
+        except XMLSyntaxError, e:
+            raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
+        except Exception, e:
+            raise e
+
+        return result
 
     def newJob(self, args={}):
-        res = self.conn.post('', args)
+        try:
+            res = self.conn.post('', args)
+        except RuntimeError, e:
+            raise UWSerror(str(e))
+
         raw = res.read()
-        print raw
-        return UWSmodels.job(raw)
+        try:
+            result = UWSmodels.job(raw)
+        except XMLSyntaxError, e:
+            raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
+        except Exception, e:
+            raise e
+
+        return result
 
     def setParamsJob(self, id, args={}):
-        res = self.conn.post(id, args)
+        try:
+            res = self.conn.post(id, args)
+        except RuntimeError, e:
+            raise UWSerror(str(e))
+
         raw = res.read()
-        return UWSmodels.job(raw)
+        try:
+            result = UWSmodels.job(raw)
+        except XMLSyntaxError, e:
+            raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
+        except Exception, e:
+            raise e
+
+        return result
 
     def runJob(self, id):
-        res = self.conn.post(id, {"phase": "run"})
+        try:
+            res = self.conn.post(id, {"phase": "run"})
+        except RuntimeError, e:
+            raise UWSerror(str(e))
+
         raw = res.read()
-        return UWSmodels.job(raw)
+        try:
+            result = UWSmodels.job(raw)
+        except XMLSyntaxError, e:
+            raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
+        except Exception, e:
+            raise e
+
+        return result
 
     def abortJob(self, id):
-        res = self.conn.post(id, {"phase": "abort"})
+        try:
+            res = self.conn.post(id, {"phase": "abort"})
+        except RuntimeError, e:
+            raise UWSerror(str(e))
+
         raw = res.read()
-        return UWSmodels.job(raw)
+        try:
+            result = UWSmodels.job(raw)
+        except XMLSyntaxError, e:
+            raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
+        except Exception, e:
+            raise e
+
+        return result
 
     def deleteJob(self, id):
-        res = self.conn.delete(id)
+        try:
+            res = self.conn.delete(id)
+        except RuntimeError, e:
+            raise UWSerror(str(e))
+
         raw = res.read()
-        return True
+        try:
+            result = True
+        except XMLSyntaxError, e:
+            raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
+        except Exception, e:
+            raise e
+
+        return result
+
+class UWSerror(Exception):
+    def __init__(self, msg, raw = False):
+        self.msg = msg
+        self.raw = raw
