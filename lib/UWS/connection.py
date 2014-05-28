@@ -80,6 +80,7 @@ class connection:
         self.headers['Content-type'] = "application/x-www-form-urlencoded"
         self.conn.request("POST", self.basePath + '/' + path, body=params, headers=self.headers)
         res = self.conn.getresponse()
+        res.read() # read body of request so we can send another
 
         if res.status == 302:
             #found - redirect
@@ -96,7 +97,7 @@ class connection:
         if res.status == 303:
             #see other
             location = res.getheader("location")
-            path = location.replace(self.url, '').lstrip("/")
+            path = location.lstrip('https://').lstrip('http://').replace(self.url, '').lstrip("/")
             return self.get(path)
 
         if res.status == 400:
@@ -119,6 +120,7 @@ class connection:
     def delete(self, path):
         self.conn.request("DELETE", self.basePath + '/' + path, headers=self.headers)
         res = self.conn.getresponse()
+        res.read() # read body of request so we can send another
 
         if res.status == 302:
             #found - redirect
@@ -135,7 +137,7 @@ class connection:
         if res.status == 303:
             #see other
             location = res.getheader("location")
-            path = location.replace(self.url, '').lstrip("/")
+            path = location.lstrip('https://').lstrip('http://').replace(self.url, '').lstrip("/")
             return self.get(path)
 
         if res.status == 400:
