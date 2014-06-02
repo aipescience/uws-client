@@ -314,7 +314,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog='uws')
 	parser.add_argument('-H', '--host', help='URL to UWS service', required=True)
 	parser.add_argument('-U', '--user', help='user name')
-	parser.add_argument('--pwd', help='password')
+	parser.add_argument('--password', help='password')
 	parser.add_argument('-P', action='store_true', help='hidden password (type at prompt)')
 	parser.add_argument('-D', '--dbg', action='store_true', help='debug mode')
 
@@ -371,11 +371,11 @@ if __name__ == '__main__':
 		debug = True
 
 	if args.P == True:
-		if args.pwd != None:
-			print "Error: You cannot use -P and --pwd together!"
+		if args.password != None:
+			print "Error: You cannot use -P and --password together!"
 			sys.exit(1)
 
-		args.pwd = getpass.getpass("Enter password: ")
+		args.password = getpass.getpass("Enter password: ")
 
 	if args.command == "list":
 		bitmask = 0
@@ -398,29 +398,29 @@ if __name__ == '__main__':
 		if args.suspended:
 			bitmask = bitmask | 256
 
-		listJobs(args.host, args.user, args.pwd, bitmask)
+		listJobs(args.host, args.user, args.password, bitmask)
 
 	if args.command == "job":
 		if args.jobCommand == "show":
-			showJob(args.host, args.user, args.pwd, args.id)
+			showJob(args.host, args.user, args.password, args.id)
 		elif args.jobCommand == "new":
 			#parse the job parameters and store in argument list
 			jobParamsList = _checkJobParameterArgs(args.jobParams)
 
-			newJob(args.host, args.user, args.pwd, jobParamsList, args.run)
+			newJob(args.host, args.user, args.password, jobParamsList, args.run)
 		elif args.jobCommand == "set":
 			#parse the job parameters and store in argument list
 			jobParamsList = _checkJobParameterArgs(args.jobParams)
 
-			setParamsJob(args.host, args.user, args.pwd, args.id, jobParamsList)
+			setParamsJob(args.host, args.user, args.password, args.id, jobParamsList)
 		elif args.jobCommand == "run":
-			runJob(args.host, args.user, args.pwd, args.id)
+			runJob(args.host, args.user, args.password, args.id)
 		elif args.jobCommand == "abort":
-			abortJob(args.host, args.user, args.pwd, args.id)
+			abortJob(args.host, args.user, args.password, args.id)
 		elif args.jobCommand == "delete":
-			deleteJob(args.host, args.user, args.pwd, args.id)
+			deleteJob(args.host, args.user, args.password, args.id)
 		elif args.jobCommand == "results":
-			resultsJob(args.host, args.user, args.pwd, args.id)
+			resultsJob(args.host, args.user, args.password, args.id)
 		else:
 			print "Error: Unknown command %s\n" % (args.jobCommand)
 
