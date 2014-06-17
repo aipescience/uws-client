@@ -10,7 +10,7 @@ Below you find a list of supported commands and their usage:
 Generic usage:
 --------------
 
-usage: uws [-h] -H HOST [-U USER] [-P PWD] {job,list} ...
+usage: uws [-h] -H HOST [-U USER] [-P] {job,list} ...
 
 positional arguments:
   {job,list}            commands for UWS
@@ -21,7 +21,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -H HOST, --host HOST  URL to UWS service
   -U USER, --user USER  user name
-  -P PWD, --pwd PWD     password
+  -P , --password PWD     password (-P: use prompt)
 
 
 List all jobs on service:
