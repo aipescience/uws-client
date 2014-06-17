@@ -136,7 +136,7 @@ def newJob(url, usr, pwd, params={}, run=False):
 	print "*" * (conWidth - 1)
 	print "You can access this job with the id:\n"
 	print "Job ID: %s" % job.jobId
-	print "Command: uws -H %s -U %s -P YOUR_PASSWORD_HERE job show %s" % (url, usr, job.jobId)
+	print "Command: uws -H %s -U %s --password YOUR_PASSWORD_HERE job show %s" % (url, usr, job.jobId)
 	print "*" * (conWidth - 1)
 
 def setParamsJob(url, usr, pwd, id, params={}):
