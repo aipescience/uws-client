@@ -213,7 +213,7 @@ def deleteJob(url, usr, pwd, id):
 	if success == True:
 		print "Job %s successfully deleted!" % (id)
 
-def resultsJob(url, usr, pwd, id):
+def resultsJob(url, usr, pwd, id, resultId):
 	def printProgress(totalSize, current):
 		if totalSize == None:
 			sys.stdout.write("\rDownloaded %d bytes" %current)    # or print >> sys.stdout, "\r%d%%" %i,
@@ -235,14 +235,20 @@ def resultsJob(url, usr, pwd, id):
 			print e.raw
 			raise
 
+	retrievedSomething = False
 	for result in job.results:
-		filename = result.id + ".dat"
-		url = str(result.reference)
-		
-		print "Downloading %s into file '%s'" % (result.id, filename)
-		UWSconn.downloadFile(url, usr, pwd, filename, callback=printProgress)
-		print ""
-		print "Finished downloading file '%s'\n" % (filename)
+		if resultId == None or resultId == result.id:
+			filename = job.jobId + '.' + result.id
+			url = str(result.reference)
+
+			print "Downloading %s into file '%s'" % (result.id, filename)
+			UWSconn.downloadFile(url, usr, pwd, filename, callback=printProgress)
+			print ""
+			print "Finished downloading file '%s'\n" % (filename)
+			retrievedSomething = True
+
+	if not retrievedSomething:
+		print "Result Id '%s' not available. Use 'uws job show ID' for a list of available results." % (resultId)
 
 def _printJob(job):
 	#format stuff
@@ -364,6 +370,7 @@ if __name__ == '__main__':
 
 	parser_job_results = jobSubparsers.add_parser('results', help="download results of a specific job")
 	parser_job_results.add_argument('id', help='job id')
+	parser_job_results.add_argument('result', nargs='?', help='result id (optional)')
 
 	args = parser.parse_args()
 
@@ -420,7 +427,7 @@ if __name__ == '__main__':
 		elif args.jobCommand == "delete":
 			deleteJob(args.host, args.user, args.password, args.id)
 		elif args.jobCommand == "results":
-			resultsJob(args.host, args.user, args.password, args.id)
+			resultsJob(args.host, args.user, args.password, args.id, args.result)
 		else:
 			print "Error: Unknown command %s\n" % (args.jobCommand)
 
