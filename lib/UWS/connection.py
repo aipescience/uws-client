@@ -97,7 +97,7 @@ class connection:
         if res.status == 303:
             #see other
             location = res.getheader("location")
-            path = location.lstrip('https://').lstrip('http://').replace(self.url, '').lstrip("/")
+            path = location.replace(self.url, '').lstrip('https://').lstrip('http://').lstrip("/")
             return self.get(path)
 
         if res.status == 400:
@@ -137,7 +137,7 @@ class connection:
         if res.status == 303:
             #see other
             location = res.getheader("location")
-            path = location.lstrip('https://').lstrip('http://').replace(self.url, '').lstrip("/")
+            path = location.replace(self.url, '').lstrip('https://').lstrip('http://').lstrip("/")
             return self.get(path)
 
         if res.status == 400:
