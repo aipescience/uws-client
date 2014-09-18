@@ -396,7 +396,7 @@ if __name__ == '__main__':
 	parser_job_results = jobSubparsers.add_parser('results', help="download results of a specific job")
 	parser_job_results.add_argument('id', help='job id')
 	parser_job_results.add_argument('resultid', nargs='?', help='result id (e.g. for specifying the format, optional)')
-	parser_job_results.add_argument('-f', '--filebasename', help='basename of output file (optional), will be appended with resultId')
+	parser_job_results.add_argument('-f', '--filebasename', help='basename of output file (optional), will be appended with resultid')
 
 	args = parser.parse_args()
 
