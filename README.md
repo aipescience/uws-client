@@ -12,12 +12,12 @@ Generic usage:
 
 usage: uws [-h] -H HOST [-U USER] [-P] {job,list} ...
 
-positional arguments:
+positional arguments:  
   {job,list}            commands for UWS  
     list                list all jobs on the UWS service  
     job                 access a given job on the UWS service  
 
-optional arguments:
+optional arguments:  
   -h, --help            show this help message and exit  
   -H HOST, --host HOST  URL to UWS service  
   -U USER, --user USER  user name  
@@ -30,7 +30,7 @@ List all jobs on service:
 usage: uws list [-h] [-c] [-p] [-q] [-e] [-E] [-a] [--unknown] [--held]
                    [--suspended]
 
-optional arguments:
+optional arguments:  
   -h, --help       show this help message and exit  
   -c, --completed  show completed jobs  
   -p, --pending    show pending jobs  
@@ -52,7 +52,7 @@ Job handling:
 
 usage: uws job [-h] {set,run,show,results,abort,new,delete} ...
 
-positional arguments:
+positional arguments:  
   {set,run,show,results,abort,new,delete}
                         commands for manipulating jobs
     show                show the specific job  
@@ -63,7 +63,7 @@ positional arguments:
     delete              delete a specific job  
     results             download results of a specific job  
 
-optional arguments:
+optional arguments:  
   -h, --help            show this help message and exit  
 
 
@@ -72,10 +72,10 @@ Show job:
 
 usage: uws job show [-h] id
 
-positional arguments:
+positional arguments:  
   id          job id
 
-optional arguments:
+optional arguments:  
   -h, --help  show this help message and exit
 
 
@@ -84,13 +84,13 @@ New job:
 
 usage: uws job new [-h] [-r] [jobParams [jobParams ...]]
 
-positional arguments:
+positional arguments:  
   jobParams   unspecified list of UWS service parameters in the form
               "<parameter>=<value>" - Default parameters are: destruction
               (Destruction time of the job), executionDuration (Execution
               duration of the job in seconds)
 
-optional arguments:
+optional arguments:  
   -h, --help  show this help message and exit  
   -r, --run   immediately submits the job on creation
 
@@ -111,14 +111,14 @@ Set parameters for existing job:
 
 usage: uws job set [-h] id [jobParams [jobParams ...]]
 
-positional arguments:
+positional arguments:  
   id          job id  
   jobParams   unspecified list of UWS service parameters in the form
               "<parameter>=<value>" - Default parameters are: destruction
               (Destruction time of the job), executionDuration (Execution
               duration of the job in seconds)
 
-optional arguments:
+optional arguments:  
   -h, --help  show this help message and exit
 
 
@@ -130,10 +130,10 @@ Run / submit an existing job:
 
 usage: uws job run [-h] id
 
-positional arguments:
+positional arguments:  
   id          job id
 
-optional arguments:
+optional arguments:  
   -h, --help  show this help message and exit
 
 
@@ -142,11 +142,11 @@ Download results from a finished job:
 
 usage: uws job results [-h] id [resultid] [-f filebasename]
 
-positional arguments:
+positional arguments:  
   id          job id  
   resultid    result id, e.g. for specifying the format  
 
-optional arguments:
+optional arguments:  
   -h, --help  show this help message and exit  
   -f, --filebasename   basename of output file, will be appended with resultid  
 
@@ -159,17 +159,17 @@ Abort or delete an existing job:
 
 usage: uws job abort [-h] id
 
-positional arguments:
+positional arguments:  
   id          job id
 
-optional arguments:
+optional arguments:  
   -h, --help  show this help message and exit
 
 
 usage: uws job delete [-h] id
 
-positional arguments:
+positional arguments:  
   id          job id
 
-optional arguments:
+optional arguments:  
   -h, --help  show this help message and exit
