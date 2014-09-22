@@ -238,7 +238,18 @@ def resultsJob(url, usr, pwd, id, resultId):
 	retrievedSomething = False
 	for result in job.results:
 		if resultId == None or resultId == result.id:
-			filename = job.jobId + '.' + result.id
+
+			filename = None
+			for parameter in job.parameters:
+				if parameter.id == 'table':
+					filename = parameter.value
+					break
+
+			if filename == None:
+				filename = job.jobId
+
+			filename += '.' + result.id
+
 			url = str(result.reference)
 
 			print "Downloading %s into file '%s'" % (result.id, filename)
