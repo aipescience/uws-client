@@ -250,6 +250,8 @@ def resultsJob(url, usr, pwd, id, resultId, userfilebasename):
 	for parameter in job.parameters:
 		if parameter.id == 'table':
 			filebasename = parameter.value
+			break
+			
 	if userfilebasename != None:
 		filebasename = userfilebasename
 
@@ -257,8 +259,7 @@ def resultsJob(url, usr, pwd, id, resultId, userfilebasename):
 	for result in job.results:
 		if resultId == None or resultId == result.id:
 
-			#filename = job.jobId + '.' + result.id
-			filename = filebasename + '-' + result.id 
+			filename = filebasename + '.' + result.id 
 			
 			url = str(result.reference)
 
