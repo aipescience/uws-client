@@ -260,7 +260,7 @@ def resultsJob(url, usr, pwd, id, resultId, userfilebasename):
 		if resultId == None or resultId == result.id:
 
 			filename = filebasename + '.' + result.id 
-			
+
 			url = str(result.reference)
 
 			print "Downloading %s into file '%s'" % (result.id, filename)
