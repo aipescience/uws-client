@@ -79,6 +79,7 @@ def listJobs(url, usr, pwd, bitmask):
 
 	print "List of jobs on UWS service for user: '%s'" % usr
 	print table.draw()
+	print "%d jobs listed." % (len(rows)-1)
 
 def _registerJobrefForTable(rows, job):
 	jobId = job.reference.href.rsplit("/", 1)
