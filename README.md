@@ -94,10 +94,11 @@ optional arguments:
   `-h`, `--help`  show this help message and exit  
   `-r`, `--run`   immediately submits the job on creation
 
-Job parameters are given at the end of the command in the following format:
+Job parameters are given at the end of the command in the following format:  
+  `<parameter>=<value>` 
 
-<parameter>=<value>: eg: `executionDuration=20`
-                         `query="SELECT * FROM foo"`
+  eg: `executionDuration=20`  
+      `query="SELECT * FROM foo"`
 
 Be aware, that a UWS service can have additional parameters for a job than the
 standardised `destruction` and `executionDuration` parameter.
