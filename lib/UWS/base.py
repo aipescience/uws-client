@@ -54,7 +54,7 @@ class base:
         except XMLSyntaxError, e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
         except Exception, e:
-            raise e
+            raise
 
         return result
 
