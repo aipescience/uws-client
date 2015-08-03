@@ -119,12 +119,11 @@ class job:
 
             self.jobId = parsed.find('uws:jobId', namespaces=UWSns).text
 
-            tmp = parsed.find('uws:runId', namespaces=UWSns)
-            self.runId = tmp.text if tmp is not None else None
+            self.runId = self._getOptional(parsed, 'uws:runId')
 
             self.ownerId = parsed.find('uws:ownerId', namespaces=UWSns).text
             self.phase = [parsed.find('uws:phase', namespaces=UWSns).text]
-            self.quote = parsed.find('uws:quote', namespaces=UWSns).text
+            self.quote = self._getOptional(parsed, 'uws:quote')
             self.startTime = parsed.find('uws:startTime', namespaces=UWSns).text
             self.endTime = parsed.find('uws:endTime', namespaces=UWSns).text
             self.executionDuration = int(parsed.find('uws:executionDuration', namespaces=UWSns).text)
@@ -212,6 +211,18 @@ class job:
             currRef = reference(href=href, type="simple")
             currResult = result(id=id, ref=currRef)
             self.results.append(currResult)
+
+    def _getOptional(self, parsed, elName):
+        """returns the text value of elName within the elementTree
+        parsed.
+
+        If elName doesn't exist, this returns None.
+        """
+        mat = parsed.find(elName, namespaces=parsed.nsmap)
+        if mat is None:
+            return None
+        else:
+            return mat.text
 
 
 class parameter:
