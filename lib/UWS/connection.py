@@ -77,8 +77,13 @@ class connection:
     def post(self, path, argDict):
         params = urllib.urlencode(argDict)
 
+        if path:
+          destURL = self.basePath + "/" + path
+        else:
+          destURL = self.basePath
+
         self.headers['Content-type'] = "application/x-www-form-urlencoded"
-        self.conn.request("POST", self.basePath + '/' + path, body=params, headers=self.headers)
+        self.conn.request("POST", destURL, body=params, headers=self.headers)
         res = self.conn.getresponse()
         res.read() # read body of request so we can send another
 
