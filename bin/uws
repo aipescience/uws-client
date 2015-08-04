@@ -79,6 +79,7 @@ def listJobs(url, usr, pwd, bitmask):
 
 	print "List of jobs on UWS service for user: '%s'" % usr
 	print table.draw()
+	print "%d jobs listed." % (len(rows)-1)
 
 def _registerJobrefForTable(rows, job):
 	jobId = job.reference.href.rsplit("/", 1)
@@ -213,7 +214,7 @@ def deleteJob(url, usr, pwd, id):
 	if success == True:
 		print "Job %s successfully deleted!" % (id)
 
-def resultsJob(url, usr, pwd, id, resultId):
+def resultsJob(url, usr, pwd, id, resultId, userfilebasename):
 	def printProgress(totalSize, current):
 		if totalSize == None:
 			sys.stdout.write("\rDownloaded %d bytes" %current)    # or print >> sys.stdout, "\r%d%%" %i,
@@ -221,7 +222,6 @@ def resultsJob(url, usr, pwd, id, resultId):
 		else:
 			sys.stdout.write("\r%d bytes" %current)    # or print >> sys.stdout, "\r%d%%" %i,
 			sys.stdout.flush()
-
 
 	UWSconn = UWSconnection.connection(url, usr, pwd)
 	UWS = UWSbase.base(UWSconn)
@@ -235,20 +235,32 @@ def resultsJob(url, usr, pwd, id, resultId):
 			print e.raw
 			raise
 
+
+	# if there are multiple result sets returned: force user to decide which ones to use?
+	# or maybe rather let the service define a standard result? but how?
+	if len(job.results) > 1 and resultId == None:
+		print 'There are multiple results for this job, all of them are downloaded now.'
+		print 'If this is not what you intended, please specify the id of your desired result like this: '
+		print '\nuws job results ID RESULTID\n'
+		print 'For RESULTID, you can choose from: ', ','.join([result.id for result in job.results])
+
+		# return
+
+	# set file base name to jobId or tablename (if available) or user provided filebasename
+	filebasename = job.jobId
+	for parameter in job.parameters:
+		if parameter.id == 'table':
+			filebasename = parameter.value
+			break
+			
+	if userfilebasename != None:
+		filebasename = userfilebasename
+
 	retrievedSomething = False
 	for result in job.results:
 		if resultId == None or resultId == result.id:
 
-			filename = None
-			for parameter in job.parameters:
-				if parameter.id == 'table':
-					filename = parameter.value
-					break
-
-			if filename == None:
-				filename = job.jobId
-
-			filename += '.' + result.id
+			filename = filebasename + '.' + result.id 
 
 			url = str(result.reference)
 
@@ -259,7 +271,11 @@ def resultsJob(url, usr, pwd, id, resultId):
 			retrievedSomething = True
 
 	if not retrievedSomething:
-		print "Result Id '%s' not available. Use 'uws job show ID' for a list of available results." % (resultId)
+		if resultId == None:
+			print "The job with id '%s' has no results." % (job.jobId)
+			print "Check with 'uws job show %s' the details, the job results may have been deleted." % (job.jobId)
+		else:
+			print "Result Id '%s' not available. Use 'uws job show %s' for a list of available results." % (resultId, job.jobId)
 
 def _printJob(job):
 	#format stuff
@@ -278,7 +294,7 @@ def _printJob(job):
 	rows.append(["Start time", job.startTime])
 	rows.append(["End time", job.endTime])
 	rows.append(["Execution duration", job.executionDuration])
-	rows.append(["Descrution time", job.destruction])
+	rows.append(["Destruction time", job.destruction])
 
 	for param in job.parameters:
 		rows.append(["Parameter " + param.id, param.value])
@@ -370,7 +386,7 @@ if __name__ == '__main__':
 															'destruction (Destruction time of the job), ' + 
 															'executionDuration (Execution duration of the job in seconds)')
 
-	parser_job_run = jobSubparsers.add_parser('run', help="run the specific job if it's state is pending")
+	parser_job_run = jobSubparsers.add_parser('run', help="run the specific job if its state is pending")
 	parser_job_run.add_argument('id', help='job id')
 
 	parser_job_abort = jobSubparsers.add_parser('abort', help="aborts the execution of a specific job")
@@ -381,7 +397,8 @@ if __name__ == '__main__':
 
 	parser_job_results = jobSubparsers.add_parser('results', help="download results of a specific job")
 	parser_job_results.add_argument('id', help='job id')
-	parser_job_results.add_argument('result', nargs='?', help='result id (optional)')
+	parser_job_results.add_argument('resultid', nargs='?', help='result id (e.g. for specifying the format, optional)')
+	parser_job_results.add_argument('-f', '--filebasename', help='basename of output file (optional), will be appended with resultid')
 
 	args = parser.parse_args()
 
@@ -438,7 +455,7 @@ if __name__ == '__main__':
 		elif args.jobCommand == "delete":
 			deleteJob(args.host, args.user, args.password, args.id)
 		elif args.jobCommand == "results":
-			resultsJob(args.host, args.user, args.password, args.id, args.result)
+			resultsJob(args.host, args.user, args.password, args.id, args.resultid, args.filebasename)
 		else:
 			print "Error: Unknown command %s\n" % (args.jobCommand)
 
