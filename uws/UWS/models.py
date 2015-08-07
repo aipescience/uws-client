@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from lxml import etree as et
 
 UWSns = None
@@ -10,7 +11,7 @@ class jobs:
         if xml is not None:
             global UWSns
 
-            #parse xml
+            # parse xml
             parsed = et.fromstring(xml)
 
             UWSns = parsed.nsmap
@@ -52,7 +53,7 @@ class jobref:
         if xmlNode is not None:
             self.id = xmlNode.get('id')
 
-            #UWS standard defines array, therefore treat phase as array
+            # UWS standard defines array, therefore treat phase as array
             self.phase = [elm.text for elm in xmlNode.findall('uws:phase', namespaces=UWSns)]
             self.reference = reference(xmlNode=xmlNode)
         elif id is not None and phase is not None and ref is not None:
@@ -112,7 +113,7 @@ class job:
         if xml is not None:
             global UWSns
 
-            #parse xml
+            # parse xml
             parsed = et.fromstring(xml)
 
             UWSns = parsed.nsmap

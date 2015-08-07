@@ -1,8 +1,6 @@
-import connection as UWSconn
+# -*- coding: utf-8 -*-
 import models as UWSmodels
 from lxml.etree import XMLSyntaxError as XMLSyntaxError
-
-import sys
 
 
 class base:
@@ -122,7 +120,8 @@ class base:
 
         return result
 
+
 class UWSerror(Exception):
-    def __init__(self, msg, raw = False):
+    def __init__(self, msg, raw=False):
         self.msg = msg
         self.raw = raw
