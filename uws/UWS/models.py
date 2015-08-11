@@ -4,7 +4,16 @@ from lxml import etree as et
 UWSns = None
 
 
-class jobs:
+class BaseUWSModel(object):
+    def _parse_bool(self, value):
+        if isinstance(value, str):
+            if value.lower() == 'true':
+                return True
+            return False
+        return value
+
+
+class jobs(BaseUWSModel):
     __slots__ = ('jobref')
 
     def __init__(self, xml=None):
@@ -46,7 +55,7 @@ class jobs:
             self.jobref.append(currJobref)
 
 
-class jobref:
+class jobref(BaseUWSModel):
     __slots__ = ('id', 'reference', 'phase')
 
     def __init__(self, id=None, phase=None, ref=None, xmlNode=None):
@@ -83,7 +92,7 @@ class jobref:
         return unicode(self).encode('utf-8')
 
 
-class reference:
+class reference(BaseUWSModel):
     __slots__ = ('type', 'href')
 
     def __init__(self, href=None, type=None, xmlNode=None):
@@ -104,7 +113,7 @@ class reference:
         return unicode(self).encode('utf-8')
 
 
-class job:
+class job(BaseUWSModel):
     __slots__ = ('jobId', 'runId', 'ownerId', 'phase', 'quote', 'startTime', 'endTime',
                  'executionDuration', 'destruction', 'parameters', 'results', 'errorSummary',
                  'jobInfo')
@@ -144,7 +153,7 @@ class job:
             for res in results:
                 self.addResult(result=result(xmlNode=res))
 
-                self.errorSummary = False
+            self.errorSummary = False
             tmp = parsed.find('uws:errorSummary', namespaces=UWSns)
             if tmp is not None:
                 self.errorSummary = errorSummary(xmlNode=tmp)
@@ -226,14 +235,14 @@ class job:
             return mat.text
 
 
-class parameter:
+class parameter(BaseUWSModel):
     __slots__ = ('id', 'byReference', 'isPost', 'value')
 
     def __init__(self, id=None, byReference=False, isPost=False, value=None, xmlNode=None):
         if xmlNode is not None:
             self.id = xmlNode.get('id')
-            self.byReference = xmlNode.get('byReference', default=False)
-            self.isPost = xmlNode.get('isPost', default=False)
+            self.byReference = self._parse_bool(xmlNode.get('byReference', default=False))
+            self.isPost = self._parse_bool(xmlNode.get('isPost', default=False))
             self.value = xmlNode.text
         elif id is not None and value is not None:
             self.id = id
@@ -253,7 +262,7 @@ class parameter:
         return unicode(self).encode('utf-8')
 
 
-class result:
+class result(BaseUWSModel):
     __slots__ = ('id', 'reference')
 
     def __init__(self, id=None, ref=None, xmlNode=None):
@@ -278,13 +287,13 @@ class result:
         return unicode(self).encode('utf-8')
 
 
-class errorSummary:
+class errorSummary(BaseUWSModel):
     __slots__ = ('type', 'hasDetail', 'messages')
 
     def __init__(self, type="transient", hasDetail=False, messages=None, xmlNode=None):
         if xmlNode is not None:
             self.type = xmlNode.get('type')
-            self.hasDetail = xmlNode.get('hasDetail', default=False)
+            self.hasDetail = self._parse_bool(xmlNode.get('hasDetail', default=False))
 
             self.messages = []
             messages = xmlNode.findall('uws:message', namespaces=UWSns)
