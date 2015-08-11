@@ -43,9 +43,6 @@ class jobs(BaseUWSModel):
     def __str__(self):
         return unicode(self).encode('utf-8')
 
-    def __repr__(self):
-        return self.jobref
-
     def addJob(self, id=None, href=None, phase=None, job=None):
         if job is not None:
             self.jobref.append(job)
