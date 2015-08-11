@@ -31,6 +31,9 @@ class JobListTest(unittest.TestCase):
 
         self.assertEqual(len(jobList.jobref), 5)
 
+        jobList_str = "Job '2014-06-03T15:33:29:4235' in phase 'COMPLETED' - https://www.cosmosim.org/uws/query/335912448787925\nJob '2014-06-02T10:14:25:1677' in phase 'ABORTED' - https://www.cosmosim.org/uws/query/308893189727250\nJob '2014-05-28T10:46:39:2755' in phase 'COMPLETED' - https://www.cosmosim.org/uws/query/198796714554760\nJob '2014-05-09T15:13:50:6896' in phase 'ERROR' - https://www.cosmosim.org/uws/query/1177277256137938\nJob 'rndSamp2' in phase 'COMPLETED' - https://www.cosmosim.org/uws/query/356246647522833857\n"
+        self.assertEqual(str(jobList), jobList_str)
+
         job1 = jobList.jobref[0]
         self.assertEqual(job1.id, '2014-06-03T15:33:29:4235')
         self.assertEqual(job1.phase, ['COMPLETED'])
@@ -105,6 +108,9 @@ ORDER BY log_mass
 
     def test(self):
         job = UWSmodels.job(self.xml)
+
+        job_str = "JobId : '335912448787925'\nRunId : 'None'\nOwnerId : 'adrian'\nPhase : 'COMPLETED'\nQuote : 'None'\nStartTime : '2014-06-03T15:33:30+02:00'\nEndTime : '2014-06-03T15:33:31+02:00'\nExecutionDuration : '30'\nDestruction : '2999-12-31T00:00:00+01:00'\nParameters :\nParameter id 'database' byRef: False isPost: False - value: cosmosim_user_adrian\nParameter id 'table' byRef: False isPost: False - value: 2014-06-03T15:33:29:4235\nParameter id 'query' byRef: False isPost: False - value: SELECT 0.25*(0.5+FLOOR(LOG10(Mvir)/0.25)) AS log_mass, COUNT(*) AS num\r\nFROM MDR1.BDMV\r\nWHERE snapnum=85 \r\nGROUP BY FLOOR(LOG10(Mvir)/0.25)\r\nORDER BY log_mass\n-- The query plan used to run this query: --\n--------------------------------------------\n--\n-- CALL paquExec('SELECT 0.25 * ( 0.5 + FLOOR( LOG10( `Mvir` ) / 0.25 ) ) AS `log_mass`,COUNT(*) AS `num`,FLOOR( LOG10( `Mvir` ) / 0.25 ) AS `_FLOOR_LOG10_Mvir_/_0__25_` FROM MDR1.BDMV WHERE ( `snapnum` = 85 )  GROUP BY FLOOR( LOG10( Mvir ) / 0.25 )  ', 'aggregation_tmp_75797262')\n-- USE spider_tmp_shard\n-- SET @i=0\n-- CREATE TABLE cosmosim_user_adrian.`2014-06-03T15:33:29:4235` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,  `log_mass`,SUM(`num`) AS `num`\r FROM `aggregation_tmp_75797262`  GROUP BY `_FLOOR_LOG10_Mvir_/_0__25_` ORDER BY `log_mass` ASC \n-- CALL paquDropTmp('aggregation_tmp_75797262')\n\nParameter id 'queue' byRef: False isPost: False - value: short\nResults :\nResult id 'csv' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/csv\nResult id 'votable.xml' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votable\nResult id 'votableB1.xml' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votableB1\nResult id 'votableB2.xml' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votableB2\nerrorSummary :\n False\njobInfo :\n"
+        self.assertEqual(str(job), job_str)
 
         self.assertEqual(job.jobId, '335912448787925')
         self.assertEqual(job.runId, None)
@@ -202,6 +208,9 @@ class AbortedJobTest(unittest.TestCase):
     def test(self):
         job = UWSmodels.job(self.xml)
 
+        job_str = "JobId : '308893189727250'\nRunId : 'None'\nOwnerId : 'adrian'\nPhase : 'ABORTED'\nQuote : 'None'\nStartTime : '2014-06-02T10:14:25+02:00'\nEndTime : '2014-06-02T10:14:55+02:00'\nExecutionDuration : '30'\nDestruction : '2999-12-31T00:00:00+01:00'\nParameters :\nParameter id 'database' byRef: False isPost: False - value: cosmosim_user_adrian\nParameter id 'table' byRef: False isPost: False - value: 2014-06-02T10:14:25:1677\nParameter id 'query' byRef: False isPost: False - value: select count(*) from MDR1.Particles85 where x < 1\n-- The query plan used to run this query: --\n--------------------------------------------\n--\n-- CALL paquExec('SELECT COUNT(*) AS `_count_*_` FROM MDR1.Particles85 WHERE ( `x` < 1 )   ', 'aggregation_tmp_49645551')\n-- USE spider_tmp_shard\n-- SET @i=0\n-- CREATE TABLE cosmosim_user_adrian.`2014-06-02T10:14:25:1677` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,  SUM(`_count_*_`) AS `_count_*_`\r FROM `aggregation_tmp_49645551`   \n-- CALL paquDropTmp('aggregation_tmp_49645551')\n\nParameter id 'queue' byRef: False isPost: False - value: short\nResults :\nerrorSummary :\n False\njobInfo :\n"
+        self.assertEqual(str(job), job_str)
+
         self.assertEqual(job.jobId, '308893189727250')
         self.assertEqual(job.runId, None)
         self.assertEqual(job.ownerId, 'adrian')
@@ -280,6 +289,9 @@ class ErroredJobTest(unittest.TestCase):
 
     def test(self):
         job = UWSmodels.job(self.xml)
+
+        job_str = "JobId : '1177277256137938'\nRunId : 'None'\nOwnerId : 'adrian'\nPhase : 'ERROR'\nQuote : 'None'\nStartTime : '2014-05-09T15:13:48+02:00'\nEndTime : '2014-05-09T15:13:48+02:00'\nExecutionDuration : '30'\nDestruction : '2999-12-31T00:00:00+01:00'\nParameters :\nParameter id 'database' byRef: False isPost: False - value: cosmosim_user_adrian\nParameter id 'table' byRef: False isPost: False - value: 2014-05-09T15:13:50:6896\nParameter id 'query' byRef: False isPost: False - value: select avg(x) from `MDPL`.`Particles88tmp`;\n-- The query plan used to run this query: --\n--------------------------------------------\n--\n-- CALL paquExec('SELECT  COUNT(x) AS `cnt_avg(x)`, SUM(x) AS `sum_avg(x)` FROM `MDPL`.`Particles88tmp` ', 'aggregation_tmp_9424512')\n-- USE spider_tmp_shard\n-- SET @i=0\n-- CREATE TABLE cosmosim_user_adrian.`2014-05-09T15:13:50:6896` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,   (SUM(`sum_avg(x)`) / SUM(`cnt_avg(x)`)) AS `avg(x)`\r FROM `aggregation_tmp_9424512`   \n-- CALL paquDropTmp('aggregation_tmp_9424512')\n\nParameter id 'queue' byRef: False isPost: False - value: short\nResults :\nerrorSummary :\n Error Summary - type 'transient' hasDetail: False - message: Remote MySQL server has gone away\njobInfo :\n"
+        self.assertEqual(str(job), job_str)
 
         self.assertEqual(job.jobId, '1177277256137938')
         self.assertEqual(job.runId, None)
