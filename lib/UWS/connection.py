@@ -164,7 +164,8 @@ class connection:
 
     def downloadFile(self, url, usr, pwd, filename, chunkSizeKB=1024, callback=None):
         request = urllib2.Request(url)
-        request.add_header("Authorization", "Basic %s" % self.authStr)
+        if hasattr(self, 'authStr'):
+            request.add_header("Authorization", "Basic %s" % self.authStr)
         handler = urllib2.urlopen(request)
 
         chunkSize = int(chunkSizeKB * 1024)

@@ -76,7 +76,7 @@ class base:
 
     def runJob(self, id):
         try:
-            res = self.conn.post(id, {"phase": "run"})
+            res = self.conn.post(id + '/phase', {"phase": "RUN"})
         except RuntimeError, e:
             raise UWSerror(str(e))
 
