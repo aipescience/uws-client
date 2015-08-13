@@ -1,9 +1,9 @@
+# -*- coding: utf-8 -*-
 import httplib
 import urllib
 import urllib2
 from urlparse import urlparse
 import base64
-import sys
 
 
 class connection:
@@ -46,7 +46,7 @@ class connection:
         res = self.conn.getresponse()
 
         if res.status == 302:
-            #found - redirect
+            # found - redirect
             location = res.getheader("location")
             newBasePath = location.replace(path, '').lstrip("/")
             self._setURL(newBasePath)
@@ -78,9 +78,9 @@ class connection:
         params = urllib.urlencode(argDict)
 
         if path:
-          destURL = self.basePath + "/" + path
+            destURL = self.basePath + "/" + path
         else:
-          destURL = self.basePath
+            destURL = self.basePath
 
         self.headers['Content-type'] = "application/x-www-form-urlencoded"
         self.conn.request("POST", destURL, body=params, headers=self.headers)
@@ -88,7 +88,7 @@ class connection:
         res.read() # read body of request so we can send another
 
         if res.status == 302:
-            #found - redirect
+            # found - redirect
             location = res.getheader("location")
             newBasePath = location.replace(path, '').lstrip("/")
             self._setURL(newBasePath)
@@ -100,7 +100,7 @@ class connection:
             return self.post(path, argDict)
 
         if res.status == 303:
-            #see other
+            # see other
             location = res.getheader("location")
             path = location.replace(self.url, '').lstrip('https://').lstrip('http://').lstrip("/")
             return self.get(path)
@@ -125,10 +125,11 @@ class connection:
     def delete(self, path):
         self.conn.request("DELETE", self.basePath + '/' + path, headers=self.headers)
         res = self.conn.getresponse()
-        res.read() # read body of request so we can send another
+        # read body of request so we can send another
+        res.read()
 
         if res.status == 302:
-            #found - redirect
+            # found - redirect
             location = res.getheader("location")
             newBasePath = location.replace(path, '').lstrip("/")
             self._setURL(newBasePath)
@@ -140,7 +141,7 @@ class connection:
             return self.delete(path)
 
         if res.status == 303:
-            #see other
+            # see other
             location = res.getheader("location")
             path = location.replace(self.url, '').lstrip('https://').lstrip('http://').lstrip("/")
             return self.get(path)
@@ -175,7 +176,7 @@ class connection:
         else:
             fileSize = None
 
-        #write the data to file
+        # write the data to file
         fileRead = 0
         with open(filename, 'wb') as filePtr:
             for chunk in iter(lambda: handler.read(chunkSize), ''):

@@ -1,10 +1,7 @@
-import sys, os
+# -*- coding: utf-8 -*-
+from uws.UWS import connection as UWSconnection
+from uws.UWS import base as UWSbase
 
-sys.path.insert(0, os.path.join(
-    os.path.dirname(os.path.dirname(os.path.realpath(__file__))), '../lib'))
-
-from UWS import connection as UWSconnection
-from UWS import base as UWSbase
 
 def main():
     UWSconn = UWSconnection.connection("http://escience.aip.de/daiquiri/uws/query", "admin", "xxxxxxxx")
