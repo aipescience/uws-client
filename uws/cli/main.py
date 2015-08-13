@@ -3,16 +3,13 @@
 import sys, os
 import getpass
 
-sys.path.insert(0, os.path.join(
-	os.path.dirname(os.path.dirname(os.path.realpath(__file__))), './lib'))
-
-from UWS import connection as UWSconnection
-from UWS import base as UWSbase
-from UWS.base import UWSerror
+from uws.UWS import connection as UWSconnection
+from uws.UWS import base as UWSbase
+from uws.UWS.base import UWSerror
 #from lib import texttable as tt
-from terminalsize import terminalsize as console
-from texttable import texttable as tt
-from argparse import argparse
+from uws.lib.terminalsize import terminalsize as console
+import texttable as tt
+import argparse
 
 debug = False
 
@@ -313,7 +310,7 @@ def _printJob(job):
 
 	(conWidth, conHeight) = console.get_terminal_size()
 
-	fields = [row[0] for row in rows]	
+	fields = [row[0] for row in rows]   
 	maxFieldLen = len(max(fields, key=len))
 
 	table = tt.Texttable(max_width=conWidth)
@@ -342,8 +339,7 @@ def _checkJobParameterArgs(args):
 
 	return argsList
 
-
-if __name__ == '__main__':
+def main():
 	parser = argparse.ArgumentParser(prog='uws')
 	parser.add_argument('-H', '--host', help='URL to UWS service', required=True)
 	parser.add_argument('-U', '--user', help='user name')
@@ -459,4 +455,5 @@ if __name__ == '__main__':
 		else:
 			print "Error: Unknown command %s\n" % (args.jobCommand)
 
-
+if __name__ == '__main__':
+	main()

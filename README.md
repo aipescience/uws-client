@@ -5,6 +5,22 @@ This is a client for IVOA Virtual Observatroy UWS services.
 It can be used to access UWS services directly or through Basic
 Authentication.
 
+Installation:
+-------------
+
+In a directory of your choice, clone uws-client from the AIP 
+eScience repository:
+
+`git clone https://github.com/aipescience/uws-client`
+
+Then install the python package using pip:
+
+`cd uws-client`
+`pip install .
+
+This will install `uws` into your systems `bin` directory and
+makes the command available on the command line.
+
 Below you find a list of supported commands and their usage:
 
 Generic usage:
