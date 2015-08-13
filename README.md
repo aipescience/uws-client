@@ -9,14 +9,24 @@ Installation:
 -------------
 
 In a directory of your choice, clone uws-client from the AIP 
-eScience repository:
+E-Science repository:
 
-`git clone https://github.com/aipescience/uws-client`
+```
+git clone https://github.com/aipescience/uws-client
+```
+
+You might need to install the headers of the xml libraries for your system. e.g for debian/Ubuntu:
+
+```
+apt-get install libxml2-dev libxslt1-dev python-dev
+```
 
 Then install the python package using pip:
 
-`cd uws-client`
-`pip install .
+```
+cd uws-client
+pip install .
+```
 
 This will install `uws` into your systems `bin` directory and
 makes the command available on the command line.
