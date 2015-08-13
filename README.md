@@ -21,10 +21,27 @@ Then install the python package using pip:
 This will install `uws` into your systems `bin` directory and
 makes the command available on the command line.
 
-Below you find a list of supported commands and their usage:
+Running unit tests:
+-------------------
 
-Generic usage:
---------------
+If you want to make sure that uws client works as we have anticipated
+it, you are free to run the unittests. For this you need to setup the
+development environment in the `uws-client` directory:
+
+```
+pip install -r ./reqirements.pip
+pip install -r ./reqirements-dev.pip
+```
+
+You can then run the unittests using nosetests:
+
+```
+cd uws
+nosetests .
+```
+
+Generic usage of the uws client:
+--------------------------------
 
 usage: `uws [-h] -H HOST [-U USER] [-P] {job,list} ...`
 
