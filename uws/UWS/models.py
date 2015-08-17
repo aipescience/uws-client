@@ -13,7 +13,7 @@ class BaseUWSModel(object):
         return value
 
 
-class jobs(BaseUWSModel):
+class Jobs(BaseUWSModel):
     __slots__ = ('jobref')
 
     def __init__(self, xml=None):

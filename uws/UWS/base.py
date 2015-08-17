@@ -16,7 +16,7 @@ class base:
         raw = res.read()
 
         try:
-            jobList = UWSmodels.jobs(raw)
+            jobList = UWSmodels.Jobs(raw)
         except XMLSyntaxError, e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
         except Exception, e:

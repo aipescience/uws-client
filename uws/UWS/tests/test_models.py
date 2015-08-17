@@ -27,7 +27,7 @@ class JobListTest(unittest.TestCase):
         '''[1:]
 
     def test(self):
-        jobList = UWSmodels.jobs(self.xml)
+        jobList = UWSmodels.Jobs(self.xml)
 
         self.assertEqual(len(jobList.jobref), 5)
 
