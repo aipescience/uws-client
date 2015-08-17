@@ -47,7 +47,7 @@ class Jobs(BaseUWSModel):
         if job is not None:
             self.jobref.append(job)
         else:
-            currRef = reference(href=href, type="simple")
+            currRef = Reference(href=href, type="simple")
             currJobref = JobRef(id=id, phase=phase, ref=currRef)
             self.jobref.append(currJobref)
 
@@ -61,7 +61,7 @@ class JobRef(BaseUWSModel):
 
             # UWS standard defines array, therefore treat phase as array
             self.phase = [elm.text for elm in xmlNode.findall('uws:phase', namespaces=UWSns)]
-            self.reference = reference(xmlNode=xmlNode)
+            self.reference = Reference(xmlNode=xmlNode)
         elif id is not None and phase is not None and ref is not None:
             self.id = id
 
@@ -77,7 +77,7 @@ class JobRef(BaseUWSModel):
         else:
             self.id = None
             self.phase = []
-            self.reference = reference()
+            self.reference = Reference()
 
     def setPhase(self, newPhase):
         self.phase = [newPhase]
@@ -89,7 +89,7 @@ class JobRef(BaseUWSModel):
         return unicode(self).encode('utf-8')
 
 
-class reference(BaseUWSModel):
+class Reference(BaseUWSModel):
     __slots__ = ('type', 'href')
 
     def __init__(self, href=None, type=None, xmlNode=None):
@@ -215,7 +215,7 @@ class job(BaseUWSModel):
         if result is not None:
             self.results.append(result)
         else:
-            currRef = reference(href=href, type="simple")
+            currRef = Reference(href=href, type="simple")
             currResult = result(id=id, ref=currRef)
             self.results.append(currResult)
 
@@ -265,7 +265,7 @@ class result(BaseUWSModel):
     def __init__(self, id=None, ref=None, xmlNode=None):
         if xmlNode is not None:
             self.id = xmlNode.get('id')
-            self.reference = reference(xmlNode=xmlNode)
+            self.reference = Reference(xmlNode=xmlNode)
         elif id is not None and phase is not None and ref is not None:
             self.id = id
 
@@ -275,7 +275,7 @@ class result(BaseUWSModel):
                 raise RuntimeError("Malformated reference given in result id: %s" % id)
         else:
             self.id = None
-            self.reference = reference()
+            self.reference = Reference()
 
     def __unicode__(self):
         return "Result id '%s' reference: %s" % (self.id, unicode(self.reference))
