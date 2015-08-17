@@ -110,7 +110,7 @@ class Reference(BaseUWSModel):
         return unicode(self).encode('utf-8')
 
 
-class job(BaseUWSModel):
+class Job(BaseUWSModel):
     __slots__ = ('jobId', 'runId', 'ownerId', 'phase', 'quote', 'startTime', 'endTime',
                  'executionDuration', 'destruction', 'parameters', 'results', 'errorSummary',
                  'jobInfo')

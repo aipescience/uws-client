@@ -32,7 +32,7 @@ class base:
 
         raw = res.read()
         try:
-            result = UWSmodels.job(raw)
+            result = UWSmodels.Job(raw)
         except XMLSyntaxError, e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
         except Exception, e:
@@ -48,7 +48,7 @@ class base:
 
         raw = res.read()
         try:
-            result = UWSmodels.job(raw)
+            result = UWSmodels.Job(raw)
         except XMLSyntaxError, e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
         except Exception, e:
@@ -64,7 +64,7 @@ class base:
 
         raw = res.read()
         try:
-            result = UWSmodels.job(raw)
+            result = UWSmodels.Job(raw)
         except XMLSyntaxError, e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
         except Exception, e:
@@ -80,7 +80,7 @@ class base:
 
         raw = res.read()
         try:
-            result = UWSmodels.job(raw)
+            result = UWSmodels.Job(raw)
         except XMLSyntaxError, e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
         except Exception, e:
@@ -96,7 +96,7 @@ class base:
 
         raw = res.read()
         try:
-            result = UWSmodels.job(raw)
+            result = UWSmodels.Job(raw)
         except XMLSyntaxError, e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
         except Exception, e:
