@@ -148,7 +148,7 @@ class Job(BaseUWSModel):
             if tmp is not None:
                 results = list(tmp)
             for res in results:
-                self.addResult(result=result(xmlNode=res))
+                self.addResult(result=Result(xmlNode=res))
 
             self.errorSummary = False
             tmp = parsed.find('uws:errorSummary', namespaces=UWSns)
@@ -216,7 +216,7 @@ class Job(BaseUWSModel):
             self.results.append(result)
         else:
             currRef = Reference(href=href, type="simple")
-            currResult = result(id=id, ref=currRef)
+            currResult = Result(id=id, ref=currRef)
             self.results.append(currResult)
 
     def _getOptional(self, parsed, elName):
@@ -259,7 +259,7 @@ class Parameter(BaseUWSModel):
         return unicode(self).encode('utf-8')
 
 
-class result(BaseUWSModel):
+class Result(BaseUWSModel):
     __slots__ = ('id', 'reference')
 
     def __init__(self, id=None, ref=None, xmlNode=None):
