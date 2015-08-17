@@ -153,7 +153,7 @@ class Job(BaseUWSModel):
             self.errorSummary = False
             tmp = parsed.find('uws:errorSummary', namespaces=UWSns)
             if tmp is not None:
-                self.errorSummary = errorSummary(xmlNode=tmp)
+                self.errorSummary = ErrorSummary(xmlNode=tmp)
 
             self.jobInfo = []
             tmp = parsed.find('uws:jobInfo', namespaces=UWSns)
@@ -284,7 +284,7 @@ class Result(BaseUWSModel):
         return unicode(self).encode('utf-8')
 
 
-class errorSummary(BaseUWSModel):
+class ErrorSummary(BaseUWSModel):
     __slots__ = ('type', 'hasDetail', 'messages')
 
     def __init__(self, type="transient", hasDetail=False, messages=None, xmlNode=None):
