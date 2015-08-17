@@ -141,7 +141,7 @@ class Job(BaseUWSModel):
             if tmp is not None:
                 parameters = list(tmp)
             for param in parameters:
-                self.addParameter(parameter=parameter(xmlNode=param))
+                self.addParameter(parameter=Parameter(xmlNode=param))
 
             self.results = []
             tmp = parsed.find('uws:results', namespaces=UWSns)
@@ -208,7 +208,7 @@ class Job(BaseUWSModel):
         if parameter is not None:
             self.parameters.append(parameter)
         else:
-            currParam = parameter(id=id, byReference=byReference, isPost=isPost, value=value)
+            currParam = Parameter(id=id, byReference=byReference, isPost=isPost, value=value)
             self.parameters.append(currParam)
 
     def addResult(self, id=None, href=None, result=None):
@@ -232,7 +232,7 @@ class Job(BaseUWSModel):
             return mat.text
 
 
-class parameter(BaseUWSModel):
+class Parameter(BaseUWSModel):
     __slots__ = ('id', 'byReference', 'isPost', 'value')
 
     def __init__(self, id=None, byReference=False, isPost=False, value=None, xmlNode=None):
