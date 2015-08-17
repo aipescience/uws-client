@@ -29,7 +29,7 @@ class Jobs(BaseUWSModel):
 
             self.jobref = []
             for xmlJob in xmlJobs:
-                self.addJob(job=jobref(xmlNode=xmlJob))
+                self.addJob(job=JobRef(xmlNode=xmlJob))
 
         else:
             self.jobref = []
@@ -48,11 +48,11 @@ class Jobs(BaseUWSModel):
             self.jobref.append(job)
         else:
             currRef = reference(href=href, type="simple")
-            currJobref = jobref(id=id, phase=phase, ref=currRef)
+            currJobref = JobRef(id=id, phase=phase, ref=currRef)
             self.jobref.append(currJobref)
 
 
-class jobref(BaseUWSModel):
+class JobRef(BaseUWSModel):
     __slots__ = ('id', 'reference', 'phase')
 
     def __init__(self, id=None, phase=None, ref=None, xmlNode=None):
