@@ -1,25 +1,23 @@
 # -*- coding: utf-8 -*-
-import sys
-import getpass
-
-from uws.UWS import connection as UWSconnection
-from uws.UWS import base as UWSbase
-from uws.UWS.base import UWSerror
-# from lib import texttable as tt
-from uws.lib.terminalsize import terminalsize as console
-import texttable as tt
 import argparse
+import getpass
+import sys
+
+import texttable as tt
+from uws.lib.terminalsize import terminalsize as console
+
+from uws import UWS
 
 debug = False
 
 
-def listJobs(url, usr, pwd, bitmask):
-    UWSconn = UWSconnection.connection(url, usr, pwd)
-    UWS = UWSbase.base(UWSconn)
+def list_jobs(url, user_name, password, bitmask):
+    uws_connection = UWS.connection.Connection(url, user_name, password)
+    uws_client = UWS.base.BaseUWSClient(uws_connection)
 
     try:
-        jobs = UWS.getJobList()
-    except UWSerror, e:
+        jobs = uws_client.get_job_list()
+    except UWS.UWSerror as e:
         if not debug:
             print "An error occurred:\n   %s" % e.msg
             return
@@ -28,70 +26,70 @@ def listJobs(url, usr, pwd, bitmask):
             raise
 
     rows = [["ID", "Job name", "Status"]]
-    for job in jobs.jobref:
+    for job in jobs.job_reference:
         if bitmask == 0:
-            _registerJobrefForTable(rows, job)
+            _register_job_reference_for_table(rows, job)
         if bitmask & 1:
             if 'COMPLETED' in job.phase:
-                _registerJobrefForTable(rows, job)
+                _register_job_reference_for_table(rows, job)
                 continue
         if bitmask & 2:
             if 'PENDING' in job.phase:
-                _registerJobrefForTable(rows, job)
+                _register_job_reference_for_table(rows, job)
                 continue
         if bitmask & 4:
             if 'QUEUED' in job.phase:
-                _registerJobrefForTable(rows, job)
+                _register_job_reference_for_table(rows, job)
                 continue
         if bitmask & 8:
             if 'EXECUTING' in job.phase:
-                _registerJobrefForTable(rows, job)
+                _register_job_reference_for_table(rows, job)
                 continue
         if bitmask & 16:
             if 'ERROR' in job.phase:
-                _registerJobrefForTable(rows, job)
+                _register_job_reference_for_table(rows, job)
                 continue
         if bitmask & 32:
             if 'ABORTED' in job.phase:
-                _registerJobrefForTable(rows, job)
+                _register_job_reference_for_table(rows, job)
                 continue
         if bitmask & 64:
             if 'UNKNOWN' in job.phase:
-                _registerJobrefForTable(rows, job)
+                _register_job_reference_for_table(rows, job)
                 continue
         if bitmask & 128:
             if 'HELD' in job.phase:
-                _registerJobrefForTable(rows, job)
+                _register_job_reference_for_table(rows, job)
                 continue
         if bitmask & 256:
             if 'SUSPENDED' in job.phase:
-                _registerJobrefForTable(rows, job)
+                _register_job_reference_for_table(rows, job)
 
-    (conWidth, conHeight) = console.get_terminal_size()
+    (console_width, console_height) = console.get_terminal_size()
 
-    table = tt.Texttable(max_width=conWidth)
+    table = tt.Texttable(max_width=console_width)
     table.set_deco(tt.Texttable.HEADER)
     table.set_cols_dtype(['t', 't', 't'])
     table.add_rows(rows)
 
-    print "List of jobs on UWS service for user: '%s'" % usr
+    print "List of jobs on UWS service for user: '%s'" % user_name
     print table.draw()
     print "%d jobs listed." % (len(rows) - 1)
 
 
-def _registerJobrefForTable(rows, job):
-    jobId = job.reference.href.rsplit("/", 1)
+def _register_job_reference_for_table(rows, job):
+    job_id = job.reference.href.rsplit("/", 1)
 
-    rows.append([jobId[1], job.id, ', '.join(job.phase)])
+    rows.append([job_id[1], job.id, ', '.join(job.phase)])
 
 
-def showJob(url, usr, pwd, id):
-    UWSconn = UWSconnection.connection(url, usr, pwd)
-    UWS = UWSbase.base(UWSconn)
+def show_job(url, user_name, password, id):
+    uws_connection = UWS.connection.Connection(url, user_name, password)
+    uws_client = UWS.base.BaseUWSClient(uws_connection)
 
     try:
-        job = UWS.getJob(id)
-    except UWSerror, e:
+        job = uws_client.get_job(id)
+    except UWS.UWSerror as e:
         if not debug:
             print "An error occurred:\n   %s" % e.msg
             return
@@ -99,16 +97,16 @@ def showJob(url, usr, pwd, id):
             print e.raw
             raise
 
-    _printJob(job)
+    _print_job(job)
 
 
-def newJob(url, usr, pwd, params={}, run=False):
-    UWSconn = UWSconnection.connection(url, usr, pwd)
-    UWS = UWSbase.base(UWSconn)
+def new_job(url, user_name, password, parameters={}, run=False):
+    uws_connection = UWS.connection.Connection(url, user_name, password)
+    uws_client = UWS.base.BaseUWSClient(uws_connection)
 
     try:
-        job = UWS.newJob(params)
-    except UWSerror, e:
+        job = uws_client.new_job(parameters)
+    except UWS.UWSerror as e:
         if not debug:
             print "An error occurred:\n   %s" % e.msg
             return
@@ -119,8 +117,8 @@ def newJob(url, usr, pwd, params={}, run=False):
     if run:
         # execute the job
         try:
-            job = UWS.runJob(job.jobId)
-        except UWSerror, e:
+            job = uws_client.run_job(job.job_id)
+        except UWS.UWSerror as e:
             if not debug:
                 print "An error occurred:\n   %s" % e.msg
                 return
@@ -128,26 +126,26 @@ def newJob(url, usr, pwd, params={}, run=False):
                 print e.raw
                 raise
 
-    (conWidth, conHeight) = console.get_terminal_size()
+    (console_width, console_height) = console.get_terminal_size()
 
-    _printJob(job)
+    _print_job(job)
 
     print "\n"
-    print "*" * (conWidth - 1)
+    print "*" * (console_width - 1)
     print "You can access this job with the id:\n"
-    print "Job ID: %s" % job.jobId
-    print "Command: uws -H %s --user=%s --password=YOUR_PASSWORD_HERE job show %s" % (url, usr, job.jobId)
-    print "*" * (conWidth - 1)
+    print "Job ID: %s" % job.job_id
+    print "Command: uws -H %s --user=%s --password=YOUR_PASSWORD_HERE job show %s" % (url, user_name, job.job_id)
+    print "*" * (console_width - 1)
 
 
-def setParamsJob(url, usr, pwd, id, params={}):
-    UWSconn = UWSconnection.connection(url, usr, pwd)
-    UWS = UWSbase.base(UWSconn)
+def set_parameters_job(url, user_name, password, id, parameters={}):
+    uws_connection = UWS.connection.Connection(url, user_name, password)
+    uws_client = UWS.base.BaseUWSClient(uws_connection)
 
-    if len(params) == 0:
+    if len(parameters) == 0:
         try:
-            job = UWS.getJob(id)
-        except UWSerror, e:
+            job = uws_client.get_job(id)
+        except UWS.UWSerror as e:
             if not debug:
                 print "An error occurred:\n   %s" % e.msg
                 return
@@ -156,8 +154,8 @@ def setParamsJob(url, usr, pwd, id, params={}):
                 raise
     else:
         try:
-            job = UWS.setParamsJob(id, params)
-        except UWSerror, e:
+            job = uws_client.set_parameters_job(id, parameters)
+        except UWS.UWSerror as e:
             if not debug:
                 print "An error occurred:\n   %s" % e.msg
                 return
@@ -165,15 +163,15 @@ def setParamsJob(url, usr, pwd, id, params={}):
                 print e.raw
                 raise
 
-    _printJob(job)
+    _print_job(job)
 
 
-def runJob(url, usr, pwd, id):
-    UWSconn = UWSconnection.connection(url, usr, pwd)
-    UWS = UWSbase.base(UWSconn)
+def run_job(url, user_name, password, id):
+    uws_connection = UWS.connection.Connection(url, user_name, password)
+    uws_client = UWS.base.BaseUWSClient(uws_connection)
     try:
-        job = UWS.runJob(id)
-    except UWSerror, e:
+        job = uws_client.run_job(id)
+    except UWS.UWSerror as e:
         if not debug:
             print "An error occurred:\n   %s" % e.msg
             return
@@ -181,15 +179,15 @@ def runJob(url, usr, pwd, id):
             print e.raw
             raise
 
-    _printJob(job)
+    _print_job(job)
 
 
-def abortJob(url, usr, pwd, id):
-    UWSconn = UWSconnection.connection(url, usr, pwd)
-    UWS = UWSbase.base(UWSconn)
+def abort_job(url, user_name, password, id):
+    uws_connection = UWS.connection.Connection(url, user_name, password)
+    uws_client = UWS.base.BaseUWSClient(uws_connection)
     try:
-        job = UWS.abortJob(id)
-    except UWSerror, e:
+        job = uws_client.abort_job(id)
+    except UWS.UWSerror as e:
         if not debug:
             print "An error occurred:\n   %s" % e.msg
             return
@@ -197,15 +195,15 @@ def abortJob(url, usr, pwd, id):
             print e.raw
             raise
 
-    _printJob(job)
+    _print_job(job)
 
 
-def deleteJob(url, usr, pwd, id):
-    UWSconn = UWSconnection.connection(url, usr, pwd)
-    UWS = UWSbase.base(UWSconn)
+def delete_job(url, user_name, password, id):
+    uws_connection = UWS.connection.Connection(url, user_name, password)
+    uws_client = UWS.base.BaseUWSClient(uws_connection)
     try:
-        success = UWS.deleteJob(id)
-    except UWSerror, e:
+        success = uws_client.delete_job(id)
+    except UWS.UWSerror as e:
         if not debug:
             print "An error occurred:\n   %s" % e.msg
             return
@@ -217,20 +215,20 @@ def deleteJob(url, usr, pwd, id):
         print "Job %s successfully deleted!" % (id)
 
 
-def resultsJob(url, usr, pwd, id, resultId, userfilebasename):
-    def printProgress(totalSize, current):
-        if totalSize:
-            sys.stdout.write("\r%d bytes" %current)    # or print >> sys.stdout, "\r%d%%" %i,
+def results_job(url, user_name, password, id, result_id, user_file_base):
+    def print_progress(total_size, current):
+        if total_size:
+            sys.stdout.write("\r%d bytes" % current)    # or print >> sys.stdout, "\r%d%%" %i,
             sys.stdout.flush()
         else:
-            sys.stdout.write("\rDownloaded %d bytes" %current)    # or print >> sys.stdout, "\r%d%%" %i,
+            sys.stdout.write("\rDownloaded %d bytes" % current)    # or print >> sys.stdout, "\r%d%%" %i,
             sys.stdout.flush()
- 
-    UWSconn = UWSconnection.connection(url, usr, pwd)
-    UWS = UWSbase.base(UWSconn)
+
+    uws_connection = UWS.connection.Connection(url, user_name, password)
+    uws_client = UWS.base.BaseUWSClient(uws_connection)
     try:
-        job = UWS.getJob(id)
-    except UWSerror, e:
+        job = uws_client.get_job(id)
+    except UWS.UWSerror as e:
         if not debug:
             print "An error occurred:\n   %s" % e.msg
             return
@@ -240,61 +238,61 @@ def resultsJob(url, usr, pwd, id, resultId, userfilebasename):
 
     # if there are multiple result sets returned: force user to decide which ones to use?
     # or maybe rather let the service define a standard result? but how?
-    if len(job.results) > 1 and not resultId:
+    if len(job.results) > 1 and not result_id:
         print 'There are multiple results for this job, all of them are downloaded now.'
         print 'If this is not what you intended, please specify the id of your desired result like this: '
         print '\nuws job results ID RESULTID\n'
         print 'For RESULTID, you can choose from: ', ','.join([result.id for result in job.results])
 
-    # set file base name to jobId or tablename (if available) or user provided filebasename
-    filebasename = job.jobId
+    # set file base name to job_id or tablename (if available) or user provided file_base
+    file_base = job.job_id
     for parameter in job.parameters:
         if parameter.id == 'table':
-            filebasename = parameter.value
+            file_base = parameter.value
             break
 
-    if userfilebasename:
-        filebasename = userfilebasename
+    if user_file_base:
+        file_base = user_file_base
 
-    retrievedSomething = False
+    retrieved = False
     for result in job.results:
-        if not resultId or resultId == result.id:
+        if not result_id or result_id == result.id:
 
-            filename = filebasename + '.' + result.id
+            filename = file_base + '.' + result.id
 
             url = str(result.reference)
 
             print "Downloading %s into file '%s'" % (result.id, filename)
-            UWSconn.downloadFile(url, usr, pwd, filename, callback=printProgress)
+            uws_connection.download_file(url, user_name, password, filename, callback=print_progress)
             print ""
             print "Finished downloading file '%s'\n" % (filename)
-            retrievedSomething = True
+            retrieved = True
 
-    if not retrievedSomething:
-        if resultId:
-            print "Result Id '%s' not available. Use 'uws job show %s' for a list of available results." % (resultId, job.jobId)
+    if not retrieved:
+        if result_id:
+            print "Result Id '%s' not available. Use 'uws job show %s' for a list of available results." % (result_id, job.job_id)
         else:
-            print "The job with id '%s' has no results." % (job.jobId)
-            print "Check with 'uws job show %s' the details, the job results may have been deleted." % (job.jobId)
+            print "The job with id '%s' has no results." % (job.job_id)
+            print "Check with 'uws job show %s' the details, the job results may have been deleted." % (job.job_id)
 
 
-def _printJob(job):
+def _print_job(job):
     # format stuff
     rows = [["Field", "Value"]]
-    rows.append(["Job id", job.jobId])
+    rows.append(["Job id", job.job_id])
 
-    if(job.runId):
-        rows.append(["UWS run id", job.runId])
+    if(job.run_id):
+        rows.append(["UWS run id", job.run_id])
 
-    rows.append(["Owner id", job.ownerId])
+    rows.append(["Owner id", job.owner_id])
     rows.append(["Phase", ", ".join(job.phase)])
 
     if(job.quote):
         rows.append(["Quote", job.quote])
 
-    rows.append(["Start time", job.startTime])
-    rows.append(["End time", job.endTime])
-    rows.append(["Execution duration", job.executionDuration])
+    rows.append(["Start time", job.start_time])
+    rows.append(["End time", job.end_time])
+    rows.append(["Execution duration", job.execution_duration])
     rows.append(["Destruction time", job.destruction])
 
     for param in job.parameters:
@@ -304,45 +302,45 @@ def _printJob(job):
         rows.append(["Result " + result.id, result.reference])
 
     try:
-        if(job.errorSummary):
-            rows.append(["Errors", "; ".join(job.errorSummary.messages)])
+        if(job.error_summary):
+            rows.append(["Errors", "; ".join(job.error_summary.messages)])
     except:
         pass
 
-    for info in job.jobInfo:
+    for info in job.job_info:
         rows.append(["Job info", unicode(info)])
 
-    (conWidth, conHeight) = console.get_terminal_size()
+    (console_width, console_height) = console.get_terminal_size()
 
     fields = [row[0] for row in rows]
-    maxFieldLen = len(max(fields, key=len))
+    max_field_len = len(max(fields, key=len))
 
-    table = tt.Texttable(max_width=conWidth)
+    table = tt.Texttable(max_width=console_width)
     table.set_deco(tt.Texttable.HEADER)
     table.set_cols_dtype(['t', 't'])
-    table.set_cols_width([maxFieldLen, conWidth - maxFieldLen - 4])
+    table.set_cols_width([max_field_len, console_width - max_field_len - 4])
     table.add_rows(rows)
     print table.draw()
 
 
 # checks validity of arguments and returns a list of arguments
-def _checkJobParameterArgs(args):
-    argsList = {}
-    for arg in args:
+def _check_job_parameter_args(arguments):
+    argument_list = {}
+    for argument in arguments:
         # valid arguments are of the form <paramter>=<value>
-        currArgPair = arg.split("=", 1)
-        if len(currArgPair) != 2:
-            raise RuntimeError('Malformatted parameter found: %s' % (", ".join(currArgPair)))
+        argument_pair = argument.split("=", 1)
+        if len(argument_pair) != 2:
+            raise RuntimeError('Malformatted parameter found: %s' % (", ".join(argument_pair)))
 
-        if currArgPair[0].lower() == "destruction":
-            currArgPair[0] = "destruction"
+        if argument_pair[0].lower() == "destruction":
+            argument_pair[0] = "destruction"
 
-        if currArgPair[0].lower() == "executionduration":
-            currArgPair[0] = "executionDuration"
+        if argument_pair[0].lower() == "executionduration":
+            argument_pair[0] = "executionDuration"
 
-        argsList[currArgPair[0]] = currArgPair[1]
+        argument_list[argument_pair[0]] = argument_pair[1]
 
-    return argsList
+    return argument_list
 
 
 def main():
@@ -369,98 +367,98 @@ def main():
 
     parser_job = subparsers.add_parser('job', help='access a given job on the UWS service')
 
-    jobSubparsers = parser_job.add_subparsers(dest='jobCommand', help='commands for manipulating jobs')
-    parser_job_show = jobSubparsers.add_parser('show', help='show the specific job')
+    job_subparsers = parser_job.add_subparsers(dest='job_command', help='commands for manipulating jobs')
+    parser_job_show = job_subparsers.add_parser('show', help='show the specific job')
     parser_job_show.add_argument('id', help='job id')
 
-    parser_job_new = jobSubparsers.add_parser('new', help='create a new job')
+    parser_job_new = job_subparsers.add_parser('new', help='create a new job')
     parser_job_new.add_argument('-r', '--run', action='store_true', help='immediately submits the job on creation')
-    parser_job_new.add_argument('jobParams', nargs='*', help='unspecified list of UWS service parameters in the form' + 
-                                                             ' "<parameter>=<value>" - ' + 
-                                                             'Default parameters are: ' +
-                                                             'destruction (Destruction time of the job), ' + 
-                                                             'executionDuration (Execution duration of the job in seconds)')
+    parser_job_new.add_argument('job_parameters', nargs='*', help='unspecified list of UWS service parameters in the form' +
+                                                                  ' "<parameter>=<value>" - ' +
+                                                                  'Default parameters are: ' +
+                                                                  'destruction (Destruction time of the job), ' +
+                                                                  'executionDuration (Execution duration of the job in seconds)')
 
-    parser_job_set = jobSubparsers.add_parser('set', help='set parameters for the specific job')
+    parser_job_set = job_subparsers.add_parser('set', help='set parameters for the specific job')
     parser_job_set.add_argument('id', help='job id')
-    parser_job_set.add_argument('jobParams', nargs='*', help='unspecified list of UWS service parameters in the form' + 
-                                                             ' "<parameter>=<value>" - ' + 
-                                                             'Default parameters are: ' +
-                                                             'destruction (Destruction time of the job), ' + 
-                                                             'executionDuration (Execution duration of the job in seconds)')
+    parser_job_set.add_argument('job_parameters', nargs='*', help='unspecified list of UWS service parameters in the form' +
+                                                                  ' "<parameter>=<value>" - ' +
+                                                                  'Default parameters are: ' +
+                                                                  'destruction (Destruction time of the job), ' +
+                                                                  'executionDuration (Execution duration of the job in seconds)')
 
-    parser_job_run = jobSubparsers.add_parser('run', help="run the specific job if its state is pending")
+    parser_job_run = job_subparsers.add_parser('run', help="run the specific job if its state is pending")
     parser_job_run.add_argument('id', help='job id')
 
-    parser_job_abort = jobSubparsers.add_parser('abort', help="aborts the execution of a specific job")
+    parser_job_abort = job_subparsers.add_parser('abort', help="aborts the execution of a specific job")
     parser_job_abort.add_argument('id', help='job id')
 
-    parser_job_abort = jobSubparsers.add_parser('delete', help="delete a specific job")
+    parser_job_abort = job_subparsers.add_parser('delete', help="delete a specific job")
     parser_job_abort.add_argument('id', help='job id')
 
-    parser_job_results = jobSubparsers.add_parser('results', help="download results of a specific job")
+    parser_job_results = job_subparsers.add_parser('results', help="download results of a specific job")
     parser_job_results.add_argument('id', help='job id')
-    parser_job_results.add_argument('resultid', nargs='?', help='result id (e.g. for specifying the format, optional)')
-    parser_job_results.add_argument('-f', '--filebasename', help='basename of output file (optional), will be appended with resultid')
+    parser_job_results.add_argument('result_id', nargs='?', help='result id (e.g. for specifying the format, optional)')
+    parser_job_results.add_argument('-f', '--file_base', help='basename of output file (optional), will be appended with result_id')
 
-    args = parser.parse_args()
+    arguments = parser.parse_args()
 
-    if args.dbg:
+    if arguments.dbg:
         debug = True
 
-    if args.P:
-        if args.password:
+    if arguments.P:
+        if arguments.password:
             print "Error: You cannot use -P and --password together!"
             sys.exit(1)
 
-        args.password = getpass.getpass("Enter password: ")
+        arguments.password = getpass.getpass("Enter password: ")
 
-    if args.command == "list":
+    if arguments.command == "list":
         bitmask = 0
-        if args.completed:
+        if arguments.completed:
             bitmask = bitmask | 1
-        if args.pending:
+        if arguments.pending:
             bitmask = bitmask | 2
-        if args.queued:
+        if arguments.queued:
             bitmask = bitmask | 4
-        if args.executing:
+        if arguments.executing:
             bitmask = bitmask | 8
-        if args.error:
+        if arguments.error:
             bitmask = bitmask | 16
-        if args.aborted:
+        if arguments.aborted:
             bitmask = bitmask | 32
-        if args.unknown:
+        if arguments.unknown:
             bitmask = bitmask | 64
-        if args.held:
+        if arguments.held:
             bitmask = bitmask | 128
-        if args.suspended:
+        if arguments.suspended:
             bitmask = bitmask | 256
 
-        listJobs(args.host, args.user, args.password, bitmask)
+        list_jobs(arguments.host, arguments.user, arguments.password, bitmask)
 
-    if args.command == "job":
-        if args.jobCommand == "show":
-            showJob(args.host, args.user, args.password, args.id)
-        elif args.jobCommand == "new":
+    if arguments.command == "job":
+        if arguments.job_command == "show":
+            show_job(arguments.host, arguments.user, arguments.password, arguments.id)
+        elif arguments.job_command == "new":
             # parse the job parameters and store in argument list
-            jobParamsList = _checkJobParameterArgs(args.jobParams)
+            job_parameters = _check_job_parameter_args(arguments.job_parameters)
 
-            newJob(args.host, args.user, args.password, jobParamsList, args.run)
-        elif args.jobCommand == "set":
+            new_job(arguments.host, arguments.user, arguments.password, job_parameters, arguments.run)
+        elif arguments.job_command == "set":
             # parse the job parameters and store in argument list
-            jobParamsList = _checkJobParameterArgs(args.jobParams)
+            job_parameters = _check_job_parameter_args(arguments.job_parameters)
 
-            setParamsJob(args.host, args.user, args.password, args.id, jobParamsList)
-        elif args.jobCommand == "run":
-            runJob(args.host, args.user, args.password, args.id)
-        elif args.jobCommand == "abort":
-            abortJob(args.host, args.user, args.password, args.id)
-        elif args.jobCommand == "delete":
-            deleteJob(args.host, args.user, args.password, args.id)
-        elif args.jobCommand == "results":
-            resultsJob(args.host, args.user, args.password, args.id, args.resultid, args.filebasename)
+            set_parameters_job(arguments.host, arguments.user, arguments.password, arguments.id, job_parameters)
+        elif arguments.job_command == "run":
+            run_job(arguments.host, arguments.user, arguments.password, arguments.id)
+        elif arguments.job_command == "abort":
+            abort_job(arguments.host, arguments.user, arguments.password, arguments.id)
+        elif arguments.job_command == "delete":
+            delete_job(arguments.host, arguments.user, arguments.password, arguments.id)
+        elif arguments.job_command == "results":
+            results_job(arguments.host, arguments.user, arguments.password, arguments.id, arguments.result_id, arguments.file_base)
         else:
-            print "Error: Unknown command %s\n" % (args.jobCommand)
+            print "Error: Unknown command %s\n" % (arguments.job_command)
 
 if __name__ == '__main__':
     main()

@@ -1,121 +1,121 @@
 # -*- coding: utf-8 -*-
-import models as UWSmodels
+import models as models
 from lxml.etree import XMLSyntaxError as XMLSyntaxError
 
 
-class base:
+class BaseUWSClient(object):
     def __init__(self, connection):
-        self.conn = connection
+        self.connection = connection
 
-    def getJobList(self):
+    def get_job_list(self):
         try:
-            res = self.conn.get('')
-        except RuntimeError, e:
+            response = self.connection.get('')
+        except RuntimeError as e:
             raise UWSerror(str(e))
 
-        raw = res.read()
+        raw = response.read()
 
         try:
-            jobList = UWSmodels.Jobs(raw)
-        except XMLSyntaxError, e:
+            job_list = models.Jobs(raw)
+        except XMLSyntaxError as e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
-        except Exception, e:
+        except Exception as e:
             raise e
 
-        return jobList
+        return job_list
 
-    def getJob(self, id):
+    def get_job(self, id):
         try:
-            res = self.conn.get(id)
-        except RuntimeError, e:
+            response = self.connection.get(id)
+        except RuntimeError as e:
             raise UWSerror(str(e))
 
-        raw = res.read()
+        raw = response.read()
         try:
-            result = UWSmodels.Job(raw)
-        except XMLSyntaxError, e:
+            result = models.Job(raw)
+        except XMLSyntaxError as e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
-        except Exception, e:
+        except Exception as e:
             raise e
 
         return result
 
-    def newJob(self, args={}):
+    def new_job(self, args={}):
         try:
-            res = self.conn.post('', args)
-        except RuntimeError, e:
+            response = self.connection.post('', args)
+        except RuntimeError as e:
             raise UWSerror(str(e))
 
-        raw = res.read()
+        raw = response.read()
         try:
-            result = UWSmodels.Job(raw)
-        except XMLSyntaxError, e:
+            result = models.Job(raw)
+        except XMLSyntaxError as e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
-        except Exception, e:
+        except Exception as e:
             raise
 
         return result
 
-    def setParamsJob(self, id, args={}):
+    def set_params_job(self, id, args={}):
         try:
-            res = self.conn.post(id, args)
-        except RuntimeError, e:
+            response = self.connection.post(id, args)
+        except RuntimeError as e:
             raise UWSerror(str(e))
 
-        raw = res.read()
+        raw = response.read()
         try:
-            result = UWSmodels.Job(raw)
-        except XMLSyntaxError, e:
+            result = models.Job(raw)
+        except XMLSyntaxError as e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
-        except Exception, e:
+        except Exception as e:
             raise e
 
         return result
 
-    def runJob(self, id):
+    def run_job(self, id):
         try:
-            res = self.conn.post(id + '/phase', {"phase": "RUN"})
-        except RuntimeError, e:
+            response = self.connection.post(id + '/phase', {"phase": "RUN"})
+        except RuntimeError as e:
             raise UWSerror(str(e))
 
-        raw = res.read()
+        raw = response.read()
         try:
-            result = UWSmodels.Job(raw)
-        except XMLSyntaxError, e:
+            result = models.Job(raw)
+        except XMLSyntaxError as e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
-        except Exception, e:
+        except Exception as e:
             raise e
 
         return result
 
-    def abortJob(self, id):
+    def abort_job(self, id):
         try:
-            res = self.conn.post(id, {"phase": "abort"})
-        except RuntimeError, e:
+            response = self.connection.post(id, {"phase": "abort"})
+        except RuntimeError as e:
             raise UWSerror(str(e))
 
-        raw = res.read()
+        raw = response.read()
         try:
-            result = UWSmodels.Job(raw)
-        except XMLSyntaxError, e:
+            result = models.Job(raw)
+        except XMLSyntaxError as e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
-        except Exception, e:
+        except Exception as e:
             raise e
 
         return result
 
-    def deleteJob(self, id):
+    def delete_job(self, id):
         try:
-            res = self.conn.delete(id)
-        except RuntimeError, e:
+            response = self.connection.delete(id)
+        except RuntimeError as e:
             raise UWSerror(str(e))
 
-        raw = res.read()
+        raw = response.read()
         try:
             result = True
-        except XMLSyntaxError, e:
+        except XMLSyntaxError as e:
             raise UWSerror("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
-        except Exception, e:
+        except Exception as e:
             raise e
 
         return result
