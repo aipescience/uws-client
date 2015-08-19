@@ -15,7 +15,7 @@ with open('README.md') as f:
 
 # get the current tag using git describe
 try:
-    tag = check_output(["git", "describe", "--tags"])
+    tag = check_output(["git", "describe", "--tags"]).strip()
 except CalledProcessError:
     sys.exit('Error: current HEAD is not tagged.')
 
