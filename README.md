@@ -125,13 +125,13 @@ optional arguments:
 New job:
 --------
 
-usage: `uws job new [-h] [-r] [jobParams [jobParams ...]]`
+usage: `uws job new [-h] [-r] [job_parameters [job_parameters ...]]`
 
 positional arguments:  
-  jobParams   unspecified list of UWS service parameters in the form
-              `<parameter>=<value>` - Default parameters are: `destruction`
-              (Destruction time of the job), `executionDuration` (Execution
-              duration of the job in seconds)
+  job_parameters   unspecified list of UWS service parameters in the form
+                   `<parameter>=<value>` - Default parameters are: `destruction`
+                   (Destruction time of the job), `executionDuration` (Execution
+                   duration of the job in seconds)
 
 optional arguments:  
   `-h`, `--help`  show this help message and exit  
@@ -151,14 +151,14 @@ service provider needs to be contacted or its documentation consulted.
 Set parameters for existing job:
 --------------------------------
 
-usage: `uws job set [-h] id [jobParams [jobParams ...]]`
+usage: `uws job set [-h] id [job_parameters [job_parameters ...]]`
 
 positional arguments:  
   `id`          job id  
-  `jobParams`   unspecified list of UWS service parameters in the form
-              `<parameter>=<value>` - Default parameters are: `destruction`
-              (Destruction time of the job), `executionDuration` (Execution
-              duration of the job in seconds)
+  `job_parameters`   unspecified list of UWS service parameters in the form
+                     `<parameter>=<value>` - Default parameters are: `destruction`
+                     (Destruction time of the job), `executionDuration` (Execution
+                     duration of the job in seconds)
 
 optional arguments:  
   `-h`, `--help`  show this help message and exit
@@ -182,18 +182,18 @@ optional arguments:
 Download results from a finished job:
 -------------------------------------
 
-usage: `uws job results [-h] id [resultid] [-f filebasename]`
+usage: `uws job results [-h] id [result_id] [-f file_base]`
 
 positional arguments:  
   `id`          job id  
-  `resultid`    result id, e.g. for specifying the format  
+  `result_id`    result id, e.g. for specifying the format  
 
 optional arguments:  
   `-h`, `--help`           show this help message and exit  
-  `-f`, `--filebasename`   basename of output file, will be appended with resultid  
+  `-f`, `--file_base`      basename of output file, will be appended with result_id  
 
 Results are downloaded to the directory from which uws was called!
-(Unless a filebasename is given and contains a path.)
+(Unless a file_base is given and contains a path.)
 
 
 Abort or delete an existing job:
