@@ -120,7 +120,7 @@ def new_job(url, user_name, password, parameters={}, run=False):
     print "*" * (console_width - 1)
     print "You can access this job with the id:\n"
     print "Job ID: %s" % job.job_id
-    print "Command: uws -H %s --user=%s --password=YOUR_PASSWORD_HERE job show %s" % (url, user_name, job.job_id)
+    print "Command: uws -H %s --user %s --password YOUR_PASSWORD_HERE job show %s" % (url, user_name, job.job_id)
     print "*" * (console_width - 1)
 
 

@@ -39,8 +39,8 @@ it, you are free to run the unittests. For this you need to setup the
 development environment in the `uws-client` directory:
 
 ```
-pip install -r ./reqirements.pip
-pip install -r ./reqirements-dev.pip
+pip install -r ./requirements.pip
+pip install -r ./requirements-dev.pip
 ```
 
 You can then run the unittests using nosetests:
@@ -93,11 +93,11 @@ corresponding phase
 Job handling:
 -------------
 
-usage: `uws job [-h] {set,run,show,results,abort,new,delete} ...`
+usage: `uws job [-h] {set,run,show,results,abort,new,delete} ...`  
 
 positional arguments:  
-  {`set`,`run`,`show`,`results`,`abort`,`new`,`delete`}
-                          commands for manipulating jobs
+  {`set`,`run`,`show`,`results`,`abort`,`new`,`delete`}  
+                          commands for manipulating jobs  
     `show`                show the specific job  
     `new`                 create a new job  
     `set`                 set parameters for the specific job  
@@ -128,14 +128,15 @@ New job:
 usage: `uws job new [-h] [-r] [job_parameters [job_parameters ...]]`
 
 positional arguments:  
-  job_parameters   unspecified list of UWS service parameters in the form
-                   `<parameter>=<value>` - Default parameters are: `destruction`
-                   (Destruction time of the job), `executionDuration` (Execution
-                   duration of the job in seconds)
+  `job_parameters`   unspecified list of UWS service parameters in the form
+                   `<parameter>=<value>`.  
+                   Default parameters are:  
+                   `destruction` (Destruction time of the job),  
+                   `executionDuration` (Execution duration of the job in seconds)  
 
 optional arguments:  
   `-h`, `--help`  show this help message and exit  
-  `-r`, `--run`   immediately submits the job on creation
+  `-r`, `--run`   immediately submits the job on creation  
 
 Job parameters are given at the end of the command in the following format:  
   `<parameter>=<value>`  
@@ -151,17 +152,18 @@ service provider needs to be contacted or its documentation consulted.
 Set parameters for existing job:
 --------------------------------
 
-usage: `uws job set [-h] id [job_parameters [job_parameters ...]]`
+usage: `uws job set [-h] id [job_parameters [job_parameters ...]]`  
 
 positional arguments:  
   `id`          job id  
   `job_parameters`   unspecified list of UWS service parameters in the form
-                     `<parameter>=<value>` - Default parameters are: `destruction`
-                     (Destruction time of the job), `executionDuration` (Execution
-                     duration of the job in seconds)
+                     `<parameter>=<value>`.  
+                     Default parameters are:  
+                     `destruction` (Destruction time of the job),  
+                     `executionDuration` (Execution duration of the job in seconds)  
 
 optional arguments:  
-  `-h`, `--help`  show this help message and exit
+  `-h`, `--help`  show this help message and exit  
 
 
 Job parameters are specified as with creating new jobs.
@@ -170,7 +172,7 @@ Job parameters are specified as with creating new jobs.
 Run / submit an existing job:
 -----------------------------
 
-usage: `uws job run [-h] id`
+usage: `uws job run [-h] id`  
 
 positional arguments:  
   `id`          `job id`
