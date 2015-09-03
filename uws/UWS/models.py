@@ -2,9 +2,39 @@
 from lxml import etree as et
 
 
+class JobPhases(object):
+    COMPLETED = 'COMPLETED'
+    PENDING = 'PENDING'
+    QUEUED = 'QUEUED'
+    EXECUTING = 'EXECUTING'
+    ERROR = 'ERROR'
+    ABORTED = 'ABORTED'
+    UNKNOWN = 'UNKNOWN'
+    HELD = 'HELD'
+    SUSPENDED = 'SUSPENDED'
+    ARCHIVED = 'ARCHIVED'
+
+    phases = [COMPLETED, PENDING, QUEUED, EXECUTING,
+              ERROR, ABORTED, UNKNOWN, HELD,
+              SUSPENDED, ARCHIVED]
+
+    versions = {
+        COMPLETED: ['1.0', '1.1'],
+        PENDING: ['1.0', '1.1'],
+        QUEUED: ['1.0', '1.1'],
+        EXECUTING: ['1.0', '1.1'],
+        ERROR: ['1.0', '1.1'],
+        ABORTED: ['1.0', '1.1'],
+        UNKNOWN: ['1.0', '1.1'],
+        HELD: ['1.0', '1.1'],
+        SUSPENDED: ['1.0', '1.1'],
+        ARCHIVED: ['1.1']
+    }
+
+
 class BaseUWSModel(object):
     def __init__(self):
-        self.version = "1.1"
+        self.version = None
 
     def _parse_bool(self, value):
         if isinstance(value, str):
@@ -160,7 +190,7 @@ class Job(BaseUWSModel):
             if tmp is not None:
                 results = list(tmp)
             for res in results:
-                self.add_result(result=Result(xml_node=res))
+                self.add_result(result=Result(xml_node=res, xml_namespace=UWSns))
 
             self.error_summary = False
             tmp = parsed.find('uws:errorSummary', namespaces=UWSns)
@@ -255,7 +285,7 @@ class Parameter(BaseUWSModel):
 
 
 class Result(BaseUWSModel):
-    def __init__(self, id=None, reference=None, xml_node=None):
+    def __init__(self, id=None, reference=None, xml_node=None, xml_namespace=None):
         super(Result, self).__init__()
 
         self.id = None
@@ -263,7 +293,7 @@ class Result(BaseUWSModel):
 
         if xml_node is not None:
             self.id = xml_node.get('id')
-            self.reference = Reference(xml_node=xml_node)
+            self.reference = Reference(xml_node=xml_node, xml_namespace=xml_namespace)
         elif id is not None and reference is not None:
             self.id = id
 
@@ -282,7 +312,7 @@ class Result(BaseUWSModel):
 class ErrorSummary(BaseUWSModel):
     def __init__(self, type="transient", has_detail=False, messages=None,
                  xml_node=None, xml_namespace=None):
-        super(Jobs, self).__init__()
+        super(ErrorSummary, self).__init__()
 
         self.type = "transient"
         self.has_detail = False
