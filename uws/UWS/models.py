@@ -34,7 +34,7 @@ class JobPhases(object):
 
 class BaseUWSModel(object):
     def __init__(self):
-        self.version = None
+        self.version = "1.0"
 
     def _parse_bool(self, value):
         if isinstance(value, str):
