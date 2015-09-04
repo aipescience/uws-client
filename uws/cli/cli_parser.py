@@ -39,6 +39,10 @@ def build_job_argparse(subparsers):
     parser_job_show = job_subparsers.add_parser('show', help='show the specific job')
     parser_job_show.add_argument('id', help='job id')
 
+    parser_job_phase = job_subparsers.add_parser('phase', help='show the phase of specific job')
+    parser_job_phase.add_argument('id', help='job id')
+
+
     parser_job_new = job_subparsers.add_parser('new', help='create a new job')
     parser_job_new.add_argument('-r', '--run', action='store_true', help='immediately submits the job on creation')
     parser_job_new.add_argument('job_parameters', nargs='*', help='unspecified list of UWS service parameters in the form' +
