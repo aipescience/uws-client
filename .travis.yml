@@ -5,4 +5,4 @@ install:
 - pip install -r requirements.pip
 - pip install -r requirements-dev.pip
 script:
-- nodetests
+- nosetests
