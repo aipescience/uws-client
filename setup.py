@@ -14,10 +14,11 @@ with open('README.md') as f:
     long_description = f.read()
 
 # get the current tag using git describe
-try:
-    tag = check_output(["git", "describe", "--tags"]).strip()
-except CalledProcessError:
-    sys.exit('Error: current HEAD is not tagged.')
+#try:
+#    tag = check_output(["git", "describe", "--tags"]).strip()
+#except CalledProcessError:
+#    sys.exit('Error: current HEAD is not tagged.')
+tag = "unversioned"
 
 setup(
     name='uws-client',
