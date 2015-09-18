@@ -38,6 +38,7 @@ class BaseUWSClient(object):
             raise UWSError("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
         except Exception as e:
             raise e
+            # TODO: had problems with "raise e" here: AttributeError: 'NoneType' object has no attribute 'text'
 
         return result
 

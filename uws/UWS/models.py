@@ -2,6 +2,7 @@
 from lxml import etree as et
 
 UWSns = None
+UWSns_uws = ''
 
 
 class BaseUWSModel(object):
@@ -19,13 +20,30 @@ class Jobs(BaseUWSModel):
 
         if xml is not None:
             global UWSns
+            global UWSns_uws
 
             # parse xml
             parsed = et.fromstring(xml)
-
             UWSns = parsed.nsmap
 
-            xml_jobs = parsed.findall('uws:jobref', namespaces=UWSns)
+            # Search for namespace that contains "http://www.ivoa.net/xml/UWS/"
+            # (usually, there is a version attached, which we ignore here),
+            # for using it (including {}) as UWSns_uws in the
+            # find/findall-functions everywhere below.
+            # Should probably make this an external function and set the
+            # namespace pattern globally somewhere
+            ns = None
+            for p in UWSns.keys():
+                value = UWSns[p]
+                if 'http://www.ivoa.net/xml/UWS/' in value:
+                    ns = value
+
+            if ns is None:
+                "Warning: no matching UWS namespace found in xml-response, probably won't find anything."
+            else:
+                UWSns_uws = '{' + ns + '}'
+
+            xml_jobs = parsed.findall(UWSns_uws+'jobref', namespaces=UWSns)
 
             self.job_reference = []
             for xmlJob in xml_jobs:
@@ -62,7 +80,7 @@ class JobRef(BaseUWSModel):
             self.id = xml_node.get('id')
 
             # UWS standard defines array, therefore treat phase as array
-            self.phase = [elm.text for elm in xml_node.findall('uws:phase', namespaces=UWSns)]
+            self.phase = [elm.text for elm in xml_node.findall(UWSns_uws+'phase', namespaces=UWSns)]
             self.reference = Reference(xml_node=xml_node)
         elif id is not None and phase is not None and reference is not None:
             self.id = id
@@ -93,6 +111,9 @@ class Reference(BaseUWSModel):
         self.href = ""
 
         if xml_node is not None:
+            # TODO: properly check for the namespace that contains xlink,
+            # namespace prefix may differ from xlink!
+            # (e.g. xl:href instead of xlink:href)
             self.type = xml_node.get('{%s}type' % UWSns['xlink'])
             self.href = xml_node.get('{%s}href' % UWSns['xlink'])
         elif href is not None and type is not None:
@@ -124,45 +145,56 @@ class Job(BaseUWSModel):
 
         if xml is not None:
             global UWSns
+            global UWSns_uws
 
             # parse xml
             parsed = et.fromstring(xml)
 
             UWSns = parsed.nsmap
+            # again find proper UWS namespace-string as prefix for search paths in find
+            ns = None
+            for p in UWSns.keys():
+                value = UWSns[p]
+                if 'http://www.ivoa.net/xml/UWS/' in value:
+                    ns = value
+            if ns is None:
+                "Warning: no matching UWS namespace found in xml-response, probably won't find anything."
+            else:
+                UWSns_uws = '{' + ns + '}'
 
-            self.job_id = parsed.find('uws:jobId', namespaces=UWSns).text
+            self.job_id = parsed.find(UWSns_uws+'jobId', namespaces=UWSns).text
 
-            self.run_id = self._get_optional(parsed, 'uws:runId')
+            self.run_id = self._get_optional(parsed, UWSns_uws+'runId')
 
-            self.owner_id = parsed.find('uws:ownerId', namespaces=UWSns).text
-            self.phase = [parsed.find('uws:phase', namespaces=UWSns).text]
-            self.quote = self._get_optional(parsed, 'uws:quote')
-            self.start_time = parsed.find('uws:startTime', namespaces=UWSns).text
-            self.end_time = parsed.find('uws:endTime', namespaces=UWSns).text
-            self.execution_duration = int(parsed.find('uws:executionDuration', namespaces=UWSns).text)
-            self.destruction = parsed.find('uws:destruction', namespaces=UWSns).text
+            self.owner_id = parsed.find(UWSns_uws+'ownerId', namespaces=UWSns).text
+            self.phase = [parsed.find(UWSns_uws+'phase', namespaces=UWSns).text]
+            self.quote = self._get_optional(parsed, UWSns_uws+'quote')
+            self.start_time = parsed.find(UWSns_uws+'startTime', namespaces=UWSns).text
+            self.end_time = parsed.find(UWSns_uws+'endTime', namespaces=UWSns).text
+            self.execution_duration = int(parsed.find(UWSns_uws+'executionDuration', namespaces=UWSns).text)
+            self.destruction = parsed.find(UWSns_uws+'destruction', namespaces=UWSns).text
 
             self.parameters = []
-            tmp = parsed.find('uws:parameters', namespaces=UWSns)
+            tmp = parsed.find(UWSns_uws+'parameters', namespaces=UWSns)
             if tmp is not None:
                 parameters = list(tmp)
             for param in parameters:
                 self.add_parameter(parameter=Parameter(xml_node=param))
 
             self.results = []
-            tmp = parsed.find('uws:results', namespaces=UWSns)
+            tmp = parsed.find(UWSns_uws+'results', namespaces=UWSns)
             if tmp is not None:
                 results = list(tmp)
             for res in results:
                 self.add_result(result=Result(xml_node=res))
 
             self.error_summary = False
-            tmp = parsed.find('uws:errorSummary', namespaces=UWSns)
+            tmp = parsed.find(UWSns_uws+'errorSummary', namespaces=UWSns)
             if tmp is not None:
                 self.error_summary = ErrorSummary(xml_node=tmp)
 
             self.job_info = []
-            tmp = parsed.find('uws:jobInfo', namespaces=UWSns)
+            tmp = parsed.find(UWSns_uws+'jobInfo', namespaces=UWSns)
             if tmp is not None:
                 self.job_info = list(tmp)
 
@@ -280,7 +312,7 @@ class ErrorSummary(BaseUWSModel):
             self.has_detail = self._parse_bool(xml_node.get('hasDetail', default=False))
 
             self.messages = []
-            messages = xml_node.findall('uws:message', namespaces=UWSns)
+            messages = xml_node.findall(uwsns+'message', namespaces=UWSns)
             for message in messages:
                 self.messages.append(message.text)
         elif messages is not None:
