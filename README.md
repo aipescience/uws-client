@@ -96,7 +96,7 @@ Job handling:
 usage: `uws job [-h] {set,run,show,results,abort,new,delete} ...`  
 
 positional arguments:  
-  {`set`,`run`,`show`,`results`,`abort`,`new`,`delete`}  
+  {`set`,`run`,`show`,`results`,`abort`,`new`,`delete`}
                           commands for manipulating jobs  
     `show`                show the specific job  
     `new`                 create a new job  
