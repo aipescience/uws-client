@@ -75,7 +75,7 @@ class BaseUWSClient(object):
 
     def run_job(self, id):
         try:
-            response = self.connection.post(id + '/phase', {"phase": "RUN"})
+            response = self.connection.post(id + '/phase', {"PHASE": "RUN"})
         except Exception as e:
             raise UWSError(str(e))
 
@@ -91,7 +91,7 @@ class BaseUWSClient(object):
 
     def abort_job(self, id):
         try:
-            response = self.connection.post(id, {"phase": "abort"})
+            response = self.connection.post(id, {"PHASE": "ABORT"})
         except Exception as e:
             raise UWSError(str(e))
 
