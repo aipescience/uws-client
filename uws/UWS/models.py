@@ -13,6 +13,24 @@ class BaseUWSModel(object):
             return False
         return value
 
+    def _find_ns_uws(self, UWSns):
+        # Search for namespace that contains "http://www.ivoa.net/xml/UWS/"
+        # (usually, there is a version attached, which we ignore here),
+        # for using it (including {}) as UWSns_uws in the
+        # find/findall-functions everywhere below.
+        ns = None
+        for p in UWSns.keys():
+            value = UWSns[p]
+            if 'http://www.ivoa.net/xml/UWS/' in value:
+                ns = value
+
+        if ns is None:
+            "Warning: no matching UWS namespace found in xml-response, probably won't find anything."
+        else:
+            UWSns_uws = '{' + ns + '}'
+        
+        return UWSns_uws
+
 
 class Jobs(BaseUWSModel):
     def __init__(self, xml=None):
@@ -25,23 +43,7 @@ class Jobs(BaseUWSModel):
             # parse xml
             parsed = et.fromstring(xml)
             UWSns = parsed.nsmap
-
-            # Search for namespace that contains "http://www.ivoa.net/xml/UWS/"
-            # (usually, there is a version attached, which we ignore here),
-            # for using it (including {}) as UWSns_uws in the
-            # find/findall-functions everywhere below.
-            # Should probably make this an external function and set the
-            # namespace pattern globally somewhere
-            ns = None
-            for p in UWSns.keys():
-                value = UWSns[p]
-                if 'http://www.ivoa.net/xml/UWS/' in value:
-                    ns = value
-
-            if ns is None:
-                "Warning: no matching UWS namespace found in xml-response, probably won't find anything."
-            else:
-                UWSns_uws = '{' + ns + '}'
+            UWSns_uws = self._find_ns_uws(UWSns)
 
             xml_jobs = parsed.findall(UWSns_uws+'jobref', namespaces=UWSns)
 
@@ -152,15 +154,8 @@ class Job(BaseUWSModel):
 
             UWSns = parsed.nsmap
             # again find proper UWS namespace-string as prefix for search paths in find
-            ns = None
-            for p in UWSns.keys():
-                value = UWSns[p]
-                if 'http://www.ivoa.net/xml/UWS/' in value:
-                    ns = value
-            if ns is None:
-                "Warning: no matching UWS namespace found in xml-response, probably won't find anything."
-            else:
-                UWSns_uws = '{' + ns + '}'
+            UWSns_uws = self._find_ns_uws(UWSns)
+
 
             self.job_id = parsed.find(UWSns_uws+'jobId', namespaces=UWSns).text
 
@@ -312,7 +307,7 @@ class ErrorSummary(BaseUWSModel):
             self.has_detail = self._parse_bool(xml_node.get('hasDetail', default=False))
 
             self.messages = []
-            messages = xml_node.findall(uwsns+'message', namespaces=UWSns)
+            messages = xml_node.findall(UWSns_uws+'message', namespaces=UWSns)
             for message in messages:
                 self.messages.append(message.text)
         elif messages is not None:
