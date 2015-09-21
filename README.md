@@ -1,6 +1,8 @@
 uws - A client for UWS IVOA services
 ====================================
 
+[![Build Status](https://travis-ci.org/aipescience/uws-client.svg?branch=travis_ci)](https://travis-ci.org/aipescience/uws-client)
+
 This is a client for IVOA Virtual Observatroy UWS services.
 It can be used to access UWS services directly or through Basic
 Authentication.
