@@ -54,8 +54,10 @@ class Jobs(BaseUWSModel):
             # parse xml
             parsed = et.fromstring(xml)
 
+
             if parsed.get("version"):
                 self.version = parsed.get("version")
+
 
             xml_jobs = parsed.findall('uws:jobref', namespaces=parsed.nsmap)
 
