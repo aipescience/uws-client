@@ -77,10 +77,20 @@ def list_jobs(url, user_name, password, phases):
     print "%d jobs listed." % (len(rows) - 1)
 
 
-def _register_job_reference_for_table(rows, job):
-    job_id = job.reference.href.rsplit("/", 1)
+def _register_job_reference_for_table(rows, jobref):
+    if (jobref.reference.href is not None):
+        job_id = jobref.reference.href.rsplit("/", 1)[1]
+    else:
+        # The 'xlink:href' attribute is optional, an explicite link is not 
+        # required. Therefore, if no link is given, then assume that the 
+        # provided jobref-id from the short description is the same as the 
+        # unique job_id in these cases (otherwise one could NOT use the job 
+        # list to get the job_ids, which would not make any sense).
+        # See xml schema described in 
+        # http://www.ivoa.net/documents/UWS/20150626/PR-UWS-1.1-20150626.pdf): 
+        job_id = jobref.id
 
-    rows.append([job_id[1], job.id, ', '.join(job.phase)])
+    rows.append([job_id, jobref.id, ', '.join(jobref.phase)])
 
 
 @handle_error

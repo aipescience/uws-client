@@ -17,7 +17,9 @@ with open('README.md') as f:
 try:
     tag = check_output(["git", "describe", "--tags"]).strip()
 except CalledProcessError:
-    sys.exit('Error: current HEAD is not tagged.')
+    #sys.exit('Error: current HEAD is not tagged.')
+    print 'Warning: current HEAD is not tagged, using "unversioned" instead.'
+    tag = "unversioned"
 
 setup(
     name='uws-client',
