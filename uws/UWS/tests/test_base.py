@@ -12,7 +12,7 @@ class BaseTest(unittest.TestCase):
 
         params = UWS.base.BaseUWSClient(None)._validate_and_parse_filters(filters)
 
-        self.assertDictEqual(params, {'PHASE[]': ['COMPLETED', 'PENDING']})
+        self.assertEqual(params, [('PHASE','COMPLETED'), ('PHASE','PENDING')])
 
     def testValidateAndParseFilterInvalidPhase(self):
         filters = {
