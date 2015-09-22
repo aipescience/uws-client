@@ -43,7 +43,9 @@ class Jobs(BaseUWSModel):
 
             self.job_reference = []
             for xmlJob in xml_jobs:
-                self.add_job(job=JobRef(xml_node=xmlJob, xml_namespace=parsed.nsmap))
+                self.add_job(
+                    job=JobRef(xml_node=xmlJob, xml_namespace=parsed.nsmap, uws_ns=uws_ns)
+                )
 
         else:
             self.job_reference = []
@@ -76,7 +78,7 @@ class JobRef(BaseUWSModel):
             self.id = xml_node.get('id')
 
             # UWS standard defines array, therefore treat phase as array
-            self.phase = [elm.text for elm in xml_node.findall(uws_ns+'phase', namespaces=parsed.nsmap)]
+            self.phase = [elm.text for elm in xml_node.findall(uws_ns+'phase', namespaces=xml_namespace)]
             self.reference = Reference(xml_node=xml_node, xml_namespace=xml_namespace)
         elif id is not None and phase is not None and reference is not None:
             self.id = id
