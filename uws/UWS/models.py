@@ -170,7 +170,7 @@ class Job(BaseUWSModel):
             if tmp is not None:
                 results = list(tmp)
             for res in results:
-                self.add_result(result=Result(xml_node=res, xml_namespace=UWSns))
+                self.add_result(result=Result(xml_node=res, xml_namespace=parsed.nsmap))
 
             self.error_summary = False
             tmp = parsed.find(uws_ns+'errorSummary', namespaces=parsed.nsmap)
