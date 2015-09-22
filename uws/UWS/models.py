@@ -170,7 +170,7 @@ class Job(BaseUWSModel):
             if tmp is not None:
                 results = list(tmp)
             for res in results:
-                self.add_result(result=Result(xml_node=res))
+                self.add_result(result=Result(xml_node=res, xml_namespace=UWSns))
 
             self.error_summary = False
             tmp = parsed.find(uws_ns+'errorSummary', namespaces=parsed.nsmap)
@@ -263,13 +263,13 @@ class Parameter(BaseUWSModel):
 
 
 class Result(BaseUWSModel):
-    def __init__(self, id=None, reference=None, xml_node=None):
+    def __init__(self, id=None, reference=None, xml_node=None, xml_namespace=None):
         self.id = None
         self.reference = Reference()
 
         if xml_node is not None:
             self.id = xml_node.get('id')
-            self.reference = Reference(xml_node=xml_node)
+            self.reference = Reference(xml_node=xml_node, xml_namespace=xml_namespace)
         elif id is not None and reference is not None:
             self.id = id
 
