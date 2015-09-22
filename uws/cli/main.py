@@ -8,7 +8,7 @@ from uws.lib.terminalsize import terminalsize as console
 import cli_parser
 from uws import UWS
 
-debug = False
+debug = True
 
 
 def handle_error(handler):
@@ -64,7 +64,9 @@ def list_jobs(url, user_name, password, phases):
                 _register_job_reference_for_table(rows, job)
         if job_phases.SUSPENDED in phases and job_phases.SUSPENDED in job.phase:
                 _register_job_reference_for_table(rows, job)
-
+        # add ARCHIVED phase as well for services with version 1.0 that already support this
+        if job_phases.ARCHIVED in phases and job_phases.ARCHIVED in job.phase:
+                _register_job_reference_for_table(rows, job)
     (console_width, console_height) = console.get_terminal_size()
 
     table = tt.Texttable(max_width=console_width)

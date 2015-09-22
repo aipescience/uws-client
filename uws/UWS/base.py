@@ -37,7 +37,6 @@ class BaseUWSClient(object):
         phases = filters_copy.pop('phases', None)
         after = filters_copy.pop('after', None)
         last = filters_copy.pop('last', None)
-        params = {}
 
         if filters_copy:
             raise UWSError("Unknown filter properties %s", filters_copy.keys())
@@ -46,7 +45,7 @@ class BaseUWSClient(object):
             if phase not in models.JobPhases.phases:
                 raise UWSError("Unknown phase %s in filter", phase)
 
-        params['PHASE[]'] = phases
+        params = [("PHASE",phase) for phase in phases]
 
         return params
 
