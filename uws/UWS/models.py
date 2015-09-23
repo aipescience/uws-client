@@ -2,7 +2,40 @@
 from lxml import etree as et
 
 
+class JobPhases(object):
+    COMPLETED = 'COMPLETED'
+    PENDING = 'PENDING'
+    QUEUED = 'QUEUED'
+    EXECUTING = 'EXECUTING'
+    ERROR = 'ERROR'
+    ABORTED = 'ABORTED'
+    UNKNOWN = 'UNKNOWN'
+    HELD = 'HELD'
+    SUSPENDED = 'SUSPENDED'
+    ARCHIVED = 'ARCHIVED'
+
+    phases = [COMPLETED, PENDING, QUEUED, EXECUTING,
+              ERROR, ABORTED, UNKNOWN, HELD,
+              SUSPENDED, ARCHIVED]
+
+    versions = {
+        COMPLETED: ['1.0', '1.1'],
+        PENDING: ['1.0', '1.1'],
+        QUEUED: ['1.0', '1.1'],
+        EXECUTING: ['1.0', '1.1'],
+        ERROR: ['1.0', '1.1'],
+        ABORTED: ['1.0', '1.1'],
+        UNKNOWN: ['1.0', '1.1'],
+        HELD: ['1.0', '1.1'],
+        SUSPENDED: ['1.0', '1.1'],
+        ARCHIVED: ['1.1']
+    }
+
+
 class BaseUWSModel(object):
+    def __init__(self):
+        self.version = "1.0"
+
     def _parse_bool(self, value):
         if isinstance(value, str):
             if value.lower() == 'true':
@@ -13,11 +46,19 @@ class BaseUWSModel(object):
 
 class Jobs(BaseUWSModel):
     def __init__(self, xml=None):
+        super(Jobs, self).__init__()
+
         self.job_reference = None
 
         if xml is not None:
             # parse xml
             parsed = et.fromstring(xml)
+
+
+            if parsed.get("version"):
+                self.version = parsed.get("version")
+
+
             xml_jobs = parsed.findall('uws:jobref', namespaces=parsed.nsmap)
 
             self.job_reference = []
@@ -47,6 +88,8 @@ class Jobs(BaseUWSModel):
 
 class JobRef(BaseUWSModel):
     def __init__(self, id=None, phase=None, reference=None, xml_node=None, xml_namespace=None):
+        super(JobRef, self).__init__()
+
         self.id = None
         self.reference = Reference()
         self.phase = []
@@ -82,6 +125,8 @@ class JobRef(BaseUWSModel):
 
 class Reference(BaseUWSModel):
     def __init__(self, href=None, type=None, xml_node=None, xml_namespace=None):
+        super(Reference, self).__init__()
+
         self.type = "simple"
         self.href = ""
 
@@ -101,6 +146,8 @@ class Reference(BaseUWSModel):
 
 class Job(BaseUWSModel):
     def __init__(self, xml=None):
+        super(Job, self).__init__()
+
         self.job_id = None
         self.run_id = None
         self.owner_id = None
@@ -214,6 +261,8 @@ class Job(BaseUWSModel):
 
 class Parameter(BaseUWSModel):
     def __init__(self, id=None, by_reference=False, is_post=False, value=None, xml_node=None):
+        super(Parameter, self).__init__()
+
         self.id = None
         self.by_reference = False
         self.is_post = False
@@ -239,6 +288,8 @@ class Parameter(BaseUWSModel):
 
 class Result(BaseUWSModel):
     def __init__(self, id=None, reference=None, xml_node=None, xml_namespace=None):
+        super(Result, self).__init__()
+
         self.id = None
         self.reference = Reference()
 
@@ -263,6 +314,8 @@ class Result(BaseUWSModel):
 class ErrorSummary(BaseUWSModel):
     def __init__(self, type="transient", has_detail=False, messages=None,
                  xml_node=None, xml_namespace=None):
+        super(ErrorSummary, self).__init__()
+
         self.type = "transient"
         self.has_detail = False
         self.messages = []

@@ -37,11 +37,18 @@ class Connection(object):
         else:
             raise RuntimeError('Wrong protocol specified')
 
-    def get(self, path):
-        if(path == ""):
-            self.connection.request("GET", self.base_path, headers=self.headers)
+    def get(self, path, params=None):
+
+        if path:
+            destination_url = self.base_path + "/" + path
         else:
-            self.connection.request("GET", self.base_path + '/' + path, headers=self.headers)
+            destination_url = self.base_path
+
+        if params:
+            params = urllib.urlencode(params, True)
+            self.connection.request("GET", destination_url+'?'+params, headers=self.headers)
+        else:
+            self.connection.request("GET", destination_url, headers=self.headers)
 
         response = self.connection.getresponse()
 
