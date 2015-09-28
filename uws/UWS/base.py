@@ -48,17 +48,9 @@ class BaseUWSClient(object):
             raise UWSError(str(e))
 
         raw = response.read()
-        # response is only the phase name, there is exactly one phase per job, 
-        # so just use this here.
-        try:
-            result = raw
-        except XMLSyntaxError as e:
-            raise UWSError("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
-        except Exception as e:
-            raise e
-
+        result = raw
+        
         return result
-
 
     def new_job(self, args={}):
         try:
