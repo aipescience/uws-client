@@ -25,6 +25,7 @@ def build_list_argparse(subparsers):
     parser_list.add_argument('-e', '--executing', action='store_true', help='show executing jobs')
     parser_list.add_argument('-E', '--error', action='store_true', help='show jobs with errors')
     parser_list.add_argument('-a', '--aborted', action='store_true', help='show aborted jobs')
+    parser_list.add_argument('-A', '--archived', action='store_true', help='show archived jobs (UWS 1.1)')
     parser_list.add_argument('--unknown', action='store_true', help='show unknown state jobs')
     parser_list.add_argument('--held', action='store_true', help='show held jobs')
     parser_list.add_argument('--suspended', action='store_true', help='show suspended jobs')

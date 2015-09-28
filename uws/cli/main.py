@@ -8,7 +8,7 @@ from uws.lib.terminalsize import terminalsize as console
 import cli_parser
 from uws import UWS
 
-debug = False
+debug = True
 
 
 def handle_error(handler):
@@ -27,52 +27,46 @@ def handle_error(handler):
 
 
 @handle_error
-def list_jobs(url, user_name, password, bitmask):
+def list_jobs(url, user_name, password, phases):
     uws_connection = UWS.connection.Connection(url, user_name, password)
     uws_client = UWS.base.BaseUWSClient(uws_connection)
 
-    jobs = uws_client.get_job_list()
+    filters = {}
+    if phases:
+        filters['phases'] = phases
 
+    jobs = uws_client.get_job_list(filters)
+
+    job_phases = UWS.models.JobPhases
+
+    # we will apply client side filtering anyways, since we are not
+    # sure that a UWS service is version 1.1 and supports server side
+    # filtering.
     rows = [["ID", "Job name", "Status"]]
     for job in jobs.job_reference:
-        if bitmask == 0:
+        if not phases or jobs.version == "1.1":
             _register_job_reference_for_table(rows, job)
-        if bitmask & 1:
-            if 'COMPLETED' in job.phase:
+        if job_phases.COMPLETED in phases and job_phases.COMPLETED in job.phase:
                 _register_job_reference_for_table(rows, job)
-                continue
-        if bitmask & 2:
-            if 'PENDING' in job.phase:
+        if job_phases.PENDING in phases and job_phases.PENDING in job.phase:
                 _register_job_reference_for_table(rows, job)
-                continue
-        if bitmask & 4:
-            if 'QUEUED' in job.phase:
+        if job_phases.QUEUED in phases and job_phases.QUEUED in job.phase:
                 _register_job_reference_for_table(rows, job)
-                continue
-        if bitmask & 8:
-            if 'EXECUTING' in job.phase:
+        if job_phases.EXECUTING in phases and job_phases.EXECUTING in job.phase:
                 _register_job_reference_for_table(rows, job)
-                continue
-        if bitmask & 16:
-            if 'ERROR' in job.phase:
+        if job_phases.ERROR in phases and job_phases.ERROR in job.phase:
                 _register_job_reference_for_table(rows, job)
-                continue
-        if bitmask & 32:
-            if 'ABORTED' in job.phase:
+        if job_phases.ABORTED in phases and job_phases.ABORTED in job.phase:
                 _register_job_reference_for_table(rows, job)
-                continue
-        if bitmask & 64:
-            if 'UNKNOWN' in job.phase:
+        if job_phases.UNKNOWN in phases and job_phases.UNKNOWN in job.phase:
                 _register_job_reference_for_table(rows, job)
-                continue
-        if bitmask & 128:
-            if 'HELD' in job.phase:
+        if job_phases.HELD in phases and job_phases.HELD in job.phase:
                 _register_job_reference_for_table(rows, job)
-                continue
-        if bitmask & 256:
-            if 'SUSPENDED' in job.phase:
+        if job_phases.SUSPENDED in phases and job_phases.SUSPENDED in job.phase:
                 _register_job_reference_for_table(rows, job)
-
+        # add ARCHIVED phase as well for services with version 1.0 that already support this
+        if job_phases.ARCHIVED in phases and job_phases.ARCHIVED in job.phase:
+                _register_job_reference_for_table(rows, job)
     (console_width, console_height) = console.get_terminal_size()
 
     table = tt.Texttable(max_width=console_width)
@@ -85,10 +79,20 @@ def list_jobs(url, user_name, password, bitmask):
     print "%d jobs listed." % (len(rows) - 1)
 
 
-def _register_job_reference_for_table(rows, job):
-    job_id = job.reference.href.rsplit("/", 1)
+def _register_job_reference_for_table(rows, jobref):
+    if (jobref.reference.href is not None):
+        job_id = jobref.reference.href.rsplit("/", 1)[1]
+    else:
+        # The 'xlink:href' attribute is optional, an explicite link is not 
+        # required. Therefore, if no link is given, then assume that the 
+        # provided jobref-id from the short description is the same as the 
+        # unique job_id in these cases (otherwise one could NOT use the job 
+        # list to get the job_ids, which would not make any sense).
+        # See xml schema described in 
+        # http://www.ivoa.net/documents/UWS/20150626/PR-UWS-1.1-20150626.pdf): 
+        job_id = jobref.id
 
-    rows.append([job_id[1], job.id, ', '.join(job.phase)])
+    rows.append([job_id, jobref.id, ', '.join(jobref.phase)])
 
 
 @handle_error
@@ -315,28 +319,30 @@ def main():
 
         arguments.password = getpass.getpass("Enter password: ")
 
+    phases = []
     if arguments.command == "list":
-        bitmask = 0
         if arguments.completed:
-            bitmask = bitmask | 1
+            phases.append(UWS.models.JobPhases.COMPLETED)
         if arguments.pending:
-            bitmask = bitmask | 2
+            phases.append(UWS.models.JobPhases.PENDING)
         if arguments.queued:
-            bitmask = bitmask | 4
+            phases.append(UWS.models.JobPhases.QUEUED)
         if arguments.executing:
-            bitmask = bitmask | 8
+            phases.append(UWS.models.JobPhases.EXECUTING)
         if arguments.error:
-            bitmask = bitmask | 16
+            phases.append(UWS.models.JobPhases.ERROR)
         if arguments.aborted:
-            bitmask = bitmask | 32
+            phases.append(UWS.models.JobPhases.ABORTED)
         if arguments.unknown:
-            bitmask = bitmask | 64
+            phases.append(UWS.models.JobPhases.UNKNOWN)
         if arguments.held:
-            bitmask = bitmask | 128
+            phases.append(UWS.models.JobPhases.HELD)
         if arguments.suspended:
-            bitmask = bitmask | 256
+            phases.append(UWS.models.JobPhases.SUSPENDED)
+        if arguments.archived:
+            phases.append(UWS.models.JobPhases.ARCHIVED)
 
-        list_jobs(arguments.host, arguments.user, arguments.password, bitmask)
+        list_jobs(arguments.host, arguments.user, arguments.password, phases)
 
     if arguments.command == "job":
         if arguments.job_command == "show":

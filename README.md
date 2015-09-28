@@ -1,6 +1,8 @@
 uws - A client for UWS IVOA services
 ====================================
 
+[![Build Status](https://travis-ci.org/aipescience/uws-client.svg?branch=travis_ci)](https://travis-ci.org/aipescience/uws-client)
+
 This is a client for IVOA Virtual Observatroy UWS services.
 It can be used to access UWS services directly or through Basic
 Authentication.
@@ -96,7 +98,7 @@ Job handling:
 usage: `uws job [-h] {set,run,show,results,abort,new,delete} ...`  
 
 positional arguments:  
-  {`set`,`run`,`show`,`results`,`abort`,`new`,`delete`}  
+  {`set`,`run`,`show`,`results`,`abort`,`new`,`delete`}
                           commands for manipulating jobs  
     `show`                show the specific job  
     `new`                 create a new job  

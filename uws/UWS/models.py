@@ -1,10 +1,41 @@
 # -*- coding: utf-8 -*-
 from lxml import etree as et
 
-UWSns = None
+
+class JobPhases(object):
+    COMPLETED = 'COMPLETED'
+    PENDING = 'PENDING'
+    QUEUED = 'QUEUED'
+    EXECUTING = 'EXECUTING'
+    ERROR = 'ERROR'
+    ABORTED = 'ABORTED'
+    UNKNOWN = 'UNKNOWN'
+    HELD = 'HELD'
+    SUSPENDED = 'SUSPENDED'
+    ARCHIVED = 'ARCHIVED'
+
+    phases = [COMPLETED, PENDING, QUEUED, EXECUTING,
+              ERROR, ABORTED, UNKNOWN, HELD,
+              SUSPENDED, ARCHIVED]
+
+    versions = {
+        COMPLETED: ['1.0', '1.1'],
+        PENDING: ['1.0', '1.1'],
+        QUEUED: ['1.0', '1.1'],
+        EXECUTING: ['1.0', '1.1'],
+        ERROR: ['1.0', '1.1'],
+        ABORTED: ['1.0', '1.1'],
+        UNKNOWN: ['1.0', '1.1'],
+        HELD: ['1.0', '1.1'],
+        SUSPENDED: ['1.0', '1.1'],
+        ARCHIVED: ['1.1']
+    }
 
 
 class BaseUWSModel(object):
+    def __init__(self):
+        self.version = "1.0"
+
     def _parse_bool(self, value):
         if isinstance(value, str):
             if value.lower() == 'true':
@@ -15,21 +46,24 @@ class BaseUWSModel(object):
 
 class Jobs(BaseUWSModel):
     def __init__(self, xml=None):
+        super(Jobs, self).__init__()
+
         self.job_reference = None
 
         if xml is not None:
-            global UWSns
-
             # parse xml
             parsed = et.fromstring(xml)
 
-            UWSns = parsed.nsmap
 
-            xml_jobs = parsed.findall('uws:jobref', namespaces=UWSns)
+            if parsed.get("version"):
+                self.version = parsed.get("version")
+
+
+            xml_jobs = parsed.findall('uws:jobref', namespaces=parsed.nsmap)
 
             self.job_reference = []
             for xmlJob in xml_jobs:
-                self.add_job(job=JobRef(xml_node=xmlJob))
+                self.add_job(job=JobRef(xml_node=xmlJob, xml_namespace=parsed.nsmap))
 
         else:
             self.job_reference = []
@@ -53,7 +87,9 @@ class Jobs(BaseUWSModel):
 
 
 class JobRef(BaseUWSModel):
-    def __init__(self, id=None, phase=None, reference=None, xml_node=None):
+    def __init__(self, id=None, phase=None, reference=None, xml_node=None, xml_namespace=None):
+        super(JobRef, self).__init__()
+
         self.id = None
         self.reference = Reference()
         self.phase = []
@@ -62,8 +98,8 @@ class JobRef(BaseUWSModel):
             self.id = xml_node.get('id')
 
             # UWS standard defines array, therefore treat phase as array
-            self.phase = [elm.text for elm in xml_node.findall('uws:phase', namespaces=UWSns)]
-            self.reference = Reference(xml_node=xml_node)
+            self.phase = [elm.text for elm in xml_node.findall('uws:phase', namespaces=xml_namespace)]
+            self.reference = Reference(xml_node=xml_node, xml_namespace=xml_namespace)
         elif id is not None and phase is not None and reference is not None:
             self.id = id
 
@@ -88,13 +124,15 @@ class JobRef(BaseUWSModel):
 
 
 class Reference(BaseUWSModel):
-    def __init__(self, href=None, type=None, xml_node=None):
+    def __init__(self, href=None, type=None, xml_node=None, xml_namespace=None):
+        super(Reference, self).__init__()
+
         self.type = "simple"
         self.href = ""
 
         if xml_node is not None:
-            self.type = xml_node.get('{%s}type' % UWSns['xlink'])
-            self.href = xml_node.get('{%s}href' % UWSns['xlink'])
+            self.type = xml_node.get('{%s}type' % xml_namespace['xlink'])
+            self.href = xml_node.get('{%s}href' % xml_namespace['xlink'])
         elif href is not None and type is not None:
             self.type = type
             self.href = href
@@ -108,6 +146,8 @@ class Reference(BaseUWSModel):
 
 class Job(BaseUWSModel):
     def __init__(self, xml=None):
+        super(Job, self).__init__()
+
         self.job_id = None
         self.run_id = None
         self.owner_id = None
@@ -123,8 +163,6 @@ class Job(BaseUWSModel):
         self.job_info = []
 
         if xml is not None:
-            global UWSns
-
             # parse xml
             parsed = et.fromstring(xml)
 
@@ -154,12 +192,12 @@ class Job(BaseUWSModel):
             if tmp is not None:
                 results = list(tmp)
             for res in results:
-                self.add_result(result=Result(xml_node=res))
+                self.add_result(result=Result(xml_node=res, xml_namespace=UWSns))
 
             self.error_summary = False
             tmp = parsed.find('uws:errorSummary', namespaces=UWSns)
             if tmp is not None:
-                self.error_summary = ErrorSummary(xml_node=tmp)
+                self.error_summary = ErrorSummary(xml_node=tmp, xml_namespace=UWSns)
 
             self.job_info = []
             tmp = parsed.find('uws:jobInfo', namespaces=UWSns)
@@ -223,6 +261,8 @@ class Job(BaseUWSModel):
 
 class Parameter(BaseUWSModel):
     def __init__(self, id=None, by_reference=False, is_post=False, value=None, xml_node=None):
+        super(Parameter, self).__init__()
+
         self.id = None
         self.by_reference = False
         self.is_post = False
@@ -247,13 +287,15 @@ class Parameter(BaseUWSModel):
 
 
 class Result(BaseUWSModel):
-    def __init__(self, id=None, reference=None, xml_node=None):
+    def __init__(self, id=None, reference=None, xml_node=None, xml_namespace=None):
+        super(Result, self).__init__()
+
         self.id = None
         self.reference = Reference()
 
         if xml_node is not None:
             self.id = xml_node.get('id')
-            self.reference = Reference(xml_node=xml_node)
+            self.reference = Reference(xml_node=xml_node, xml_namespace=xml_namespace)
         elif id is not None and reference is not None:
             self.id = id
 
@@ -270,7 +312,10 @@ class Result(BaseUWSModel):
 
 
 class ErrorSummary(BaseUWSModel):
-    def __init__(self, type="transient", has_detail=False, messages=None, xml_node=None):
+    def __init__(self, type="transient", has_detail=False, messages=None,
+                 xml_node=None, xml_namespace=None):
+        super(ErrorSummary, self).__init__()
+
         self.type = "transient"
         self.has_detail = False
         self.messages = []
@@ -280,7 +325,7 @@ class ErrorSummary(BaseUWSModel):
             self.has_detail = self._parse_bool(xml_node.get('hasDetail', default=False))
 
             self.messages = []
-            messages = xml_node.findall('uws:message', namespaces=UWSns)
+            messages = xml_node.findall('uws:message', namespaces=xml_namespace)
             for message in messages:
                 self.messages.append(message.text)
         elif messages is not None:
