@@ -1,6 +1,34 @@
 # -*- coding: utf-8 -*-
 from lxml import etree as et
 
+uws_1_namespace = "http://www.ivoa.net/xml/UWS/v1.0"
+#uws_2_namespace = "http://www.ivoa.net/xml/UWS/v2.0"
+
+
+class UWS_1_Names(object): 
+    def __init__(self, namespaces=None):
+
+        if uws_1_namespace not in namespaces.values():
+            raise RuntimeError("No supported UWS namespace found in xml-response, cannot parse xml.")
+
+        self.uws_namespace = uws_1_namespace
+        self.jobs = et.QName(self.uws_namespace, "jobs")
+        self.jobref = et.QName(self.uws_namespace, "jobref")
+        self.phase = et.QName(self.uws_namespace, "phase")
+        self.jobId = et.QName(self.uws_namespace, "jobId")
+        self.runId = et.QName(self.uws_namespace, "runId")
+        self.ownerId = et.QName(self.uws_namespace, "ownerId")
+        self.quote = et.QName(self.uws_namespace, "quote")
+        self.startTime = et.QName(self.uws_namespace, "startTime")
+        self.endTime = et.QName(self.uws_namespace, "endTime")
+        self.executionDuration = et.QName(self.uws_namespace, "executionDuration")
+        self.destruction = et.QName(self.uws_namespace, "destruction")
+        self.parameters = et.QName(self.uws_namespace, "parameters")
+        self.results = et.QName(self.uws_namespace, "results")
+        self.errorSummary = et.QName(self.uws_namespace, "errorSummary")
+        self.message = et.QName(self.uws_namespace, "message")
+        self.jobInfo = et.QName(self.uws_namespace, "jobInfo")
+
 
 class BaseUWSModel(object):
     def _parse_bool(self, value):
@@ -10,22 +38,6 @@ class BaseUWSModel(object):
             return False
         return value
 
-    def _find_uws_namespace(self, namespaces):
-        # Search for namespace that contains "http://www.ivoa.net/xml/UWS/"
-        # (usually, there is a version attached, which we ignore here),
-        # for using it (including {}) as uws_namespace in the
-        # find/findall-functions everywhere below.
-        namespace = None
-        namespace = next(value for key, value in namespaces.iteritems()
-                            if 'http://www.ivoa.net/xml/UWS/' in value)
-        
-        if namespace is None:
-            raise RuntimeError("No matching UWS namespace found in xml-response, cannot parse xml.")
-        else:
-            uws_namespace = '{' + namespace + '}'
-
-        return uws_namespace
-
 
 class Jobs(BaseUWSModel):
     def __init__(self, xml=None):
@@ -34,14 +46,16 @@ class Jobs(BaseUWSModel):
         if xml is not None:
             # parse xml
             parsed = et.fromstring(xml)
-            uws_namespace = self._find_uws_namespace(parsed.nsmap)
 
-            xml_jobs = parsed.findall(uws_namespace+'jobref', namespaces=parsed.nsmap)
+            uws_qnames = UWS_1_Names(parsed.nsmap)
+            
+            xml_jobs = parsed.findall(uws_qnames.jobref, namespaces=parsed.nsmap)
+            # WORKS!!! :-)
 
             self.job_reference = []
             for xmlJob in xml_jobs:
                 self.add_job(
-                    job=JobRef(xml_node=xmlJob, xml_namespace=parsed.nsmap, uws_namespace=uws_namespace)
+                    job=JobRef(xml_node=xmlJob, xml_namespace=parsed.nsmap, uws_qnames=uws_qnames)
                 )
 
         else:
@@ -66,7 +80,8 @@ class Jobs(BaseUWSModel):
 
 
 class JobRef(BaseUWSModel):
-    def __init__(self, id=None, phase=None, reference=None, xml_node=None, xml_namespace=None, uws_namespace=''):
+    def __init__(self, id=None, phase=None, reference=None, xml_node=None, xml_namespace=None, uws_qnames=None):
+
         self.id = None
         self.reference = Reference()
         self.phase = []
@@ -75,7 +90,7 @@ class JobRef(BaseUWSModel):
             self.id = xml_node.get('id')
 
             # UWS standard defines array, therefore treat phase as array
-            self.phase = [elm.text for elm in xml_node.findall(uws_namespace+'phase', namespaces=xml_namespace)]
+            self.phase = [elm.text for elm in xml_node.findall(uws_qnames.phase, namespaces=xml_namespace)]
             self.reference = Reference(xml_node=xml_node, xml_namespace=xml_namespace)
         elif id is not None and phase is not None and reference is not None:
             self.id = id
@@ -143,41 +158,41 @@ class Job(BaseUWSModel):
             parsed = et.fromstring(xml)
 
             # again find proper UWS namespace-string as prefix for search paths in find
-            uws_namespace = self._find_uws_namespace(parsed.nsmap)
+            uws_qnames = UWS_1_Names(parsed.nsmap)
 
-            self.job_id = parsed.find(uws_namespace + 'jobId', namespaces=parsed.nsmap).text
+            self.job_id = parsed.find(uws_qnames.jobId, namespaces=parsed.nsmap).text
 
-            self.run_id = self._get_optional(parsed, uws_namespace + 'runId')
+            self.run_id = self._get_optional(parsed, uws_qnames.runId)
 
-            self.owner_id = parsed.find(uws_namespace + 'ownerId', namespaces=parsed.nsmap).text
-            self.phase = [parsed.find(uws_namespace + 'phase', namespaces=parsed.nsmap).text]
-            self.quote = self._get_optional(parsed, uws_namespace + 'quote')
-            self.start_time = parsed.find(uws_namespace + 'startTime', namespaces=parsed.nsmap).text
-            self.end_time = parsed.find(uws_namespace + 'endTime', namespaces=parsed.nsmap).text
-            self.execution_duration = int(parsed.find(uws_namespace + 'executionDuration', namespaces=parsed.nsmap).text)
-            self.destruction = parsed.find(uws_namespace + 'destruction', namespaces=parsed.nsmap).text
+            self.owner_id = parsed.find(uws_qnames.ownerId, namespaces=parsed.nsmap).text
+            self.phase = [parsed.find(uws_qnames.phase, namespaces=parsed.nsmap).text]
+            self.quote = self._get_optional(parsed, uws_qnames.quote)
+            self.start_time = parsed.find(uws_qnames.startTime, namespaces=parsed.nsmap).text
+            self.end_time = parsed.find(uws_qnames.endTime, namespaces=parsed.nsmap).text
+            self.execution_duration = int(parsed.find(uws_qnames.executionDuration, namespaces=parsed.nsmap).text)
+            self.destruction = parsed.find(uws_qnames.destruction, namespaces=parsed.nsmap).text
 
             self.parameters = []
-            tmp = parsed.find(uws_namespace + 'parameters', namespaces=parsed.nsmap)
+            tmp = parsed.find(uws_qnames.parameters, namespaces=parsed.nsmap)
             if tmp is not None:
                 parameters = list(tmp)
             for param in parameters:
                 self.add_parameter(parameter=Parameter(xml_node=param))
 
             self.results = []
-            tmp = parsed.find(uws_namespace + 'results', namespaces=parsed.nsmap)
+            tmp = parsed.find(uws_qnames.results, namespaces=parsed.nsmap)
             if tmp is not None:
                 results = list(tmp)
             for res in results:
                 self.add_result(result=Result(xml_node=res, xml_namespace=parsed.nsmap))
 
             self.error_summary = False
-            tmp = parsed.find(uws_namespace + 'errorSummary', namespaces=parsed.nsmap)
+            tmp = parsed.find(uws_qnames.errorSummary, namespaces=parsed.nsmap)
             if tmp is not None:
-                self.error_summary = ErrorSummary(xml_node=tmp, xml_namespace=parsed.nsmap, uws_namespace=uws_namespace)
+                self.error_summary = ErrorSummary(xml_node=tmp, xml_namespace=parsed.nsmap, uws_qnames=uws_qnames)
 
             self.job_info = []
-            tmp = parsed.find(uws_namespace + 'jobInfo', namespaces=parsed.nsmap)
+            tmp = parsed.find(uws_qnames.jobInfo, namespaces=parsed.nsmap)
             if tmp is not None:
                 self.job_info = list(tmp)
 
@@ -286,7 +301,7 @@ class Result(BaseUWSModel):
 
 class ErrorSummary(BaseUWSModel):
     def __init__(self, type="transient", has_detail=False, messages=None,
-                 xml_node=None, xml_namespace=None, uws_namespace=''):
+                 xml_node=None, xml_namespace=None, uws_qnames=None):
         self.type = "transient"
         self.has_detail = False
         self.messages = []
@@ -296,7 +311,7 @@ class ErrorSummary(BaseUWSModel):
             self.has_detail = self._parse_bool(xml_node.get('hasDetail', default=False))
 
             self.messages = []
-            messages = xml_node.findall(uws_namespace + 'message', namespaces=xml_namespace)
+            messages = xml_node.findall(uws_qnames.message, namespaces=xml_namespace)
 
             for message in messages:
                 self.messages.append(message.text)
