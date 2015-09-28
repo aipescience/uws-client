@@ -8,11 +8,18 @@ class BaseUWSClient(object):
     def __init__(self, connection):
         self.connection = connection
 
-    def get_job_list(self):
+    def get_job_list(self, filters):
+        params = None
+        if filters:
+            params = self._validate_and_parse_filters(filters)
+
         try:
-            response = self.connection.get('')
-        except Exception as e:
-            raise UWSError(str(e))
+            response = self.connection.get('', params)
+        except:
+            try:
+                response = self.connection.get('')
+            except Exception as e:
+                raise UWSError(str(e))
 
         raw = response.read()
 
@@ -24,6 +31,23 @@ class BaseUWSClient(object):
             raise e
 
         return job_list
+
+    def _validate_and_parse_filters(self, filters):
+        filters_copy = filters.copy()
+        phases = filters_copy.pop('phases', None)
+        after = filters_copy.pop('after', None)
+        last = filters_copy.pop('last', None)
+
+        if filters_copy:
+            raise UWSError("Unknown filter properties %s", filters_copy.keys())
+
+        for phase in phases:
+            if phase not in models.JobPhases.phases:
+                raise UWSError("Unknown phase %s in filter", phase)
+
+        params = [("PHASE",phase) for phase in phases]
+
+        return params
 
     def get_job(self, id):
         try:
