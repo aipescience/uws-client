@@ -65,6 +65,17 @@ class BaseUWSClient(object):
 
         return result
 
+    def get_phase(self, id):
+        try:
+            response = self.connection.get(id + '/phase')
+        except Exception as e:
+            raise UWSError(str(e))
+
+        raw = response.read()
+        result = raw
+        
+        return result
+
     def new_job(self, args={}):
         try:
             response = self.connection.post('', args)

@@ -95,15 +95,16 @@ corresponding phase
 Job handling:
 -------------
 
-usage: `uws job [-h] {set,run,show,results,abort,new,delete} ...`  
+usage: `uws job [-h] {set,run,show,phase,results,abort,new,delete} ...`  
 
 positional arguments:  
-  {`set`,`run`,`show`,`results`,`abort`,`new`,`delete`}
+  {`set`,`run`,`show`,`phase`,`results`,`abort`,`new`,`delete`}
                           commands for manipulating jobs  
     `show`                show the specific job  
     `new`                 create a new job  
     `set`                 set parameters for the specific job  
-    `run`                 run the specific job if its state is pending  
+    `run`                 run the specific job if its state is pending
+    `phase`               show the phase of a specific job
     `abort`               aborts the execution of a specific job  
     `delete`              delete a specific job  
     `results`             download results of a specific job  
@@ -175,6 +176,18 @@ Run / submit an existing job:
 -----------------------------
 
 usage: `uws job run [-h] id`  
+
+positional arguments:  
+  `id`          `job id`
+
+optional arguments:  
+  `-h`, `--help`  show this help message and exit
+
+
+Show phase of job:
+------------------
+
+usage: `uws job phase [-h] id`
 
 positional arguments:  
   `id`          `job id`
