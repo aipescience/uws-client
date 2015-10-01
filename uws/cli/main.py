@@ -106,6 +106,16 @@ def show_job(url, user_name, password, id):
 
 
 @handle_error
+def show_phase(url, user_name, password, id):
+    uws_connection = UWS.connection.Connection(url, user_name, password)
+    uws_client = UWS.base.BaseUWSClient(uws_connection)
+
+    phase = uws_client.get_phase(id)
+
+    print(phase)
+
+
+@handle_error
 def new_job(url, user_name, password, parameters={}, run=False):
     uws_connection = UWS.connection.Connection(url, user_name, password)
     uws_client = UWS.base.BaseUWSClient(uws_connection)
@@ -337,6 +347,8 @@ def main():
     if arguments.command == "job":
         if arguments.job_command == "show":
             show_job(arguments.host, arguments.user, arguments.password, arguments.id)
+        elif arguments.job_command == "phase":
+            show_phase(arguments.host, arguments.user, arguments.password, arguments.id)
         elif arguments.job_command == "new":
             # parse the job parameters and store in argument list
             job_parameters = _check_job_parameter_args(arguments.job_parameters)
