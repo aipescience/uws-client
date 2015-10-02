@@ -47,8 +47,10 @@ class BaseUWSClient(object):
                 raise UWSError("Unknown phase %s in filter", phase)
 
         params = [("PHASE", phase) for phase in phases]
-        params.append(("AFTER", after))
-        params.append(("LAST", last))
+        if after:
+            params.append(("AFTER", after))
+        if last:
+            params.append(("LAST", last))
 
         return params
 
