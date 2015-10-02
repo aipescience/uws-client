@@ -27,13 +27,17 @@ def handle_error(handler):
 
 
 @handle_error
-def list_jobs(url, user_name, password, phases):
+def list_jobs(url, user_name, password, phases, after=None, last=None):
     uws_connection = UWS.connection.Connection(url, user_name, password)
     uws_client = UWS.base.BaseUWSClient(uws_connection)
 
     filters = {}
     if phases:
         filters['phases'] = phases
+    if after:
+        filters['after'] = after
+    if last:
+        filters['last'] = last
 
     jobs = uws_client.get_job_list(filters)
 
@@ -304,6 +308,20 @@ def _check_job_parameter_args(arguments):
     return argument_list
 
 
+def _check_joblist_after(argument):
+    # TODO: should check here for proper time format
+    return argument
+
+
+def _check_joblist_last(argument):
+    try:
+        nlast = int(argument)
+    except ValueError:
+        sys.exit("Error: Value for 'last' argument must be an integer: %s" % (str(argument)))
+
+    return nlast
+
+
 def main():
     global debug
     parser = cli_parser.build_argparse()
@@ -342,7 +360,15 @@ def main():
         if arguments.archived:
             phases.append(UWS.models.JobPhases.ARCHIVED)
 
-        list_jobs(arguments.host, arguments.user, arguments.password, phases)
+        after = None
+        if arguments.after:
+            after = _check_joblist_after(arguments.after)
+
+        last = None
+        if arguments.last:
+            last = _check_joblist_last(arguments.last)
+
+        list_jobs(arguments.host, arguments.user, arguments.password, phases, after, last)
 
     if arguments.command == "job":
         if arguments.job_command == "show":

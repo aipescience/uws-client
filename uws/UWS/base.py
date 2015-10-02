@@ -12,6 +12,7 @@ class BaseUWSClient(object):
         params = None
         if filters:
             params = self._validate_and_parse_filters(filters)
+            print 'params: ', params ## debug
 
         try:
             response = self.connection.get('', params)
@@ -45,7 +46,9 @@ class BaseUWSClient(object):
             if phase not in models.JobPhases.phases:
                 raise UWSError("Unknown phase %s in filter", phase)
 
-        params = [("PHASE",phase) for phase in phases]
+        params = [("PHASE", phase) for phase in phases]
+        params.append(("AFTER", after))
+        params.append(("LAST", last))
 
         return params
 

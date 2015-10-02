@@ -86,10 +86,11 @@ optional arguments:
   `--unknown`          show unknown state jobs  
   `--held`             show held jobs  
   `--suspended`        show suspended jobs  
-
+  `--after TIMESTAMP`  show only jobs after given time
+  `--last  NUMBER`     show only last NUMBER jobs
 
 Specifying any of the specific job phases will only show those jobs with the
-corresponding phase
+corresponding phase. 
 
 
 Job handling:

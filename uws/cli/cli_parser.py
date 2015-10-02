@@ -29,6 +29,8 @@ def build_list_argparse(subparsers):
     parser_list.add_argument('--unknown', action='store_true', help='show unknown state jobs')
     parser_list.add_argument('--held', action='store_true', help='show held jobs')
     parser_list.add_argument('--suspended', action='store_true', help='show suspended jobs')
+    parser_list.add_argument('--after', action='store', help='show jobs submitted after given time')
+    parser_list.add_argument('--last', action='store', help='show the last N jobs only')
 
     return parser_list
 
