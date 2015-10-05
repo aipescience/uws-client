@@ -1,3 +1,4 @@
 argparse>=1.2.1
 texttable>=0.8.1
 lxml
+dateutil.parser
