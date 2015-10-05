@@ -105,8 +105,7 @@ def show_job(url, user_name, password, id):
 
 @handle_error
 def show_phase(url, user_name, password, id):
-    uws_connection = UWS.connection.Connection(url, user_name, password)
-    uws_client = UWS.base.BaseUWSClient(uws_connection)
+    uws_client = UWS.client.Client(url=url, user=user_name, password=password)
 
     phase = uws_client.get_phase(id)
 
