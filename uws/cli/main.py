@@ -292,7 +292,7 @@ def _print_job(job):
 def _check_job_parameter_args(arguments):
     argument_list = {}
     for argument in arguments:
-        # valid arguments are of the form <paramter>=<value>
+        # valid arguments are of the form <parameter>=<value>
         argument_pair = argument.split("=", 1)
         if len(argument_pair) != 2:
             raise RuntimeError('Malformatted parameter found: %s' % (", ".join(argument_pair)))
@@ -309,17 +309,18 @@ def _check_job_parameter_args(arguments):
 
 
 def _check_joblist_after(argument):
-    # TODO: should check here for proper time format
+    # TODO: should check here for proper time format or only when validating parameters later on?
     return argument
 
 
 def _check_joblist_last(argument):
-    try:
-        nlast = int(argument)
-    except ValueError:
-        sys.exit("Error: Value for 'last' argument must be an integer: %s" % (str(argument)))
-
-    return nlast
+    #try:
+    #    nlast = int(argument)
+    #except ValueError:
+    #    sys.exit("Error: Value for 'last' argument must be an integer: %s" % (str(argument)))
+    #return nlast
+    # checks will be done in _validate_and_parse_filters
+    return argument
 
 
 def main():

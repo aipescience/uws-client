@@ -2,7 +2,8 @@
 from lxml.etree import XMLSyntaxError as XMLSyntaxError
 
 import models
-
+from datetime import datetime
+import dateutil.parser
 
 class BaseUWSClient(object):
     def __init__(self, connection):
@@ -42,14 +43,34 @@ class BaseUWSClient(object):
         if filters_copy:
             raise UWSError("Unknown filter properties %s", filters_copy.keys())
 
-        for phase in phases:
-            if phase not in models.JobPhases.phases:
-                raise UWSError("Unknown phase %s in filter", phase)
+        params = []
 
-        params = [("PHASE", phase) for phase in phases]
+        if phases:
+            for phase in phases:
+                if phase not in models.JobPhases.phases:
+                    raise UWSError("Unknown phase %s in filter", phase)
+                params.append(("PHASE", phase))
+
         if after:
-            params.append(("AFTER", after))
+            # TODO: Allow to provide local time and convert here to UTC?
+            # TODO: We may encounter more troubles with microseconds, if ',' used instead of '.'(e.g. German systems)
+
+            try:
+                date = dateutil.parser.parse(after)
+                # TODO: The day defaults to '05' if no day is given (e.g. '2010-09'->'2010-09-05'), not to '01'. Is this OK?
+            except:
+                raise UWSError("Date time format could not be parsed, expecting UTC in ISO 8601:2004 format or compatible: %s" % (str(after)))
+            date = datetime.isoformat(date)
+            params.append(("AFTER", date))
+
         if last:
+            notint = False
+            try:
+                last = int(last)
+            except:
+                notint = True
+            if notint or last < 0:
+                raise UWSError("Value for 'last' argument must be a positive integer: %s" % (str(last)))
             params.append(("LAST", last))
 
         return params
