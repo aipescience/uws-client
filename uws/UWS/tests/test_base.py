@@ -10,7 +10,7 @@ class BaseTest(unittest.TestCase):
             'phases': ['COMPLETED', 'PENDING']
         }
 
-        params = UWS.base.BaseUWSClient(None)._validate_and_parse_filters(filters)
+        params = UWS.client.Client("/")._validate_and_parse_filters(filters)
 
         self.assertEqual(params, [('PHASE','COMPLETED'), ('PHASE','PENDING')])
 
@@ -21,7 +21,7 @@ class BaseTest(unittest.TestCase):
 
         self.assertRaises(
             UWS.UWSError,
-            UWS.base.BaseUWSClient(None)._validate_and_parse_filters,
+            UWS.client.Client("/")._validate_and_parse_filters,
             filters
         )
 
