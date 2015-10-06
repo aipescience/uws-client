@@ -30,7 +30,7 @@ class BaseTest(unittest.TestCase):
             'after': '2015-09-10T10:01:02.135'
         }
 
-        params = UWS.base.BaseUWSClient(None)._validate_and_parse_filters(filters)
+        params = UWS.client.Client("/")._validate_and_parse_filters(filters)
 
         self.assertEqual(params, [('AFTER','2015-09-10T10:01:02.135000')])
 
@@ -41,16 +41,27 @@ class BaseTest(unittest.TestCase):
 
         self.assertRaises(
             UWS.UWSError,
-            UWS.base.BaseUWSClient(None)._validate_and_parse_filters,
+            UWS.client.Client("/")._validate_and_parse_filters,
             filters
         )
+
+    def testValidateAndParseAfterFilterTimeZone(self):
+        filters = {
+            'after': '2015-10-03T01:12+2:00'
+        }
+
+        params = UWS.client.Client("/")._validate_and_parse_filters(filters)
+
+        self.assertEqual(params, [('AFTER', '2015-10-02T23:12:00')])
+
+
 
     def testValidateAndParseLastFilter(self):
         filters = {
             'last': '1000'
         }
 
-        params = UWS.base.BaseUWSClient(None)._validate_and_parse_filters(filters)
+        params = UWS.client.Client("/")._validate_and_parse_filters(filters)
 
         self.assertEqual(params, [('LAST',1000)])
 
@@ -59,14 +70,22 @@ class BaseTest(unittest.TestCase):
             'last': '100.0'
         }
 
-        self.assertRaises(UWS.UWSError, UWS.base.BaseUWSClient(None)._validate_and_parse_filters, filters)
+        self.assertRaises(
+            UWS.UWSError,
+            UWS.client.Client("/")._validate_and_parse_filters,
+            filters
+        )
 
     def testValidateAndParseLastFilterNegativeValue(self):
         filters = {
             'last': '-100'
         }
 
-        self.assertRaises(UWS.UWSError, UWS.base.BaseUWSClient(None)._validate_and_parse_filters, filters)
+        self.assertRaises(
+            UWS.UWSError,
+            UWS.client.Client("/")._validate_and_parse_filters,
+            filters
+        )
 
     def testValidateAndParseAfterLastFilter(self):
         filters = {
@@ -74,9 +93,10 @@ class BaseTest(unittest.TestCase):
             'last': '100'
         }
 
-        params = UWS.base.BaseUWSClient(None)._validate_and_parse_filters(filters)
+        params = UWS.client.Client("/")._validate_and_parse_filters(filters)
 
-        self.assertEqual(params, [('AFTER','2015-09-10T10:01:02.135000'), ('LAST', 100)])
+        self.assertEqual(params, [('AFTER','2015-09-10T10:01:02.135000'),
+            ('LAST', 100)])
 
     def testValidateAndParseAfterLastPhaseFilter(self):
         filters = {
@@ -85,7 +105,8 @@ class BaseTest(unittest.TestCase):
             'phases': ['PENDING', 'ERROR']
         }
 
-        params = UWS.base.BaseUWSClient(None)._validate_and_parse_filters(filters)
+        params = UWS.client.Client("/")._validate_and_parse_filters(filters)
 
-        self.assertEqual(params, [ ('PHASE','PENDING'), ('PHASE','ERROR'), ('AFTER','2015-09-10T10:01:02.135000'), ('LAST', 100)])
+        self.assertEqual(params, [ ('PHASE','PENDING'), ('PHASE','ERROR'),
+            ('AFTER','2015-09-10T10:01:02.135000'), ('LAST', 100)])
 
