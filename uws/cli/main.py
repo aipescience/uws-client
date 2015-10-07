@@ -45,27 +45,28 @@ def list_jobs(url, user_name, password, phases):
     for job in jobs.job_reference:
         if not phases or jobs.version == "1.1":
             _register_job_reference_for_table(rows, job)
-        if job_phases.COMPLETED in phases and job_phases.COMPLETED in job.phase:
-                _register_job_reference_for_table(rows, job)
-        if job_phases.PENDING in phases and job_phases.PENDING in job.phase:
-                _register_job_reference_for_table(rows, job)
-        if job_phases.QUEUED in phases and job_phases.QUEUED in job.phase:
-                _register_job_reference_for_table(rows, job)
-        if job_phases.EXECUTING in phases and job_phases.EXECUTING in job.phase:
-                _register_job_reference_for_table(rows, job)
-        if job_phases.ERROR in phases and job_phases.ERROR in job.phase:
-                _register_job_reference_for_table(rows, job)
-        if job_phases.ABORTED in phases and job_phases.ABORTED in job.phase:
-                _register_job_reference_for_table(rows, job)
-        if job_phases.UNKNOWN in phases and job_phases.UNKNOWN in job.phase:
-                _register_job_reference_for_table(rows, job)
-        if job_phases.HELD in phases and job_phases.HELD in job.phase:
-                _register_job_reference_for_table(rows, job)
-        if job_phases.SUSPENDED in phases and job_phases.SUSPENDED in job.phase:
-                _register_job_reference_for_table(rows, job)
-        # add ARCHIVED phase as well for services with version 1.0 that already support this
-        if job_phases.ARCHIVED in phases and job_phases.ARCHIVED in job.phase:
-                _register_job_reference_for_table(rows, job)
+        else:
+            if job_phases.COMPLETED in phases and job_phases.COMPLETED in job.phase:
+                    _register_job_reference_for_table(rows, job)
+            if job_phases.PENDING in phases and job_phases.PENDING in job.phase:
+                    _register_job_reference_for_table(rows, job)
+            if job_phases.QUEUED in phases and job_phases.QUEUED in job.phase:
+                    _register_job_reference_for_table(rows, job)
+            if job_phases.EXECUTING in phases and job_phases.EXECUTING in job.phase:
+                    _register_job_reference_for_table(rows, job)
+            if job_phases.ERROR in phases and job_phases.ERROR in job.phase:
+                    _register_job_reference_for_table(rows, job)
+            if job_phases.ABORTED in phases and job_phases.ABORTED in job.phase:
+                    _register_job_reference_for_table(rows, job)
+            if job_phases.UNKNOWN in phases and job_phases.UNKNOWN in job.phase:
+                    _register_job_reference_for_table(rows, job)
+            if job_phases.HELD in phases and job_phases.HELD in job.phase:
+                    _register_job_reference_for_table(rows, job)
+            if job_phases.SUSPENDED in phases and job_phases.SUSPENDED in job.phase:
+                    _register_job_reference_for_table(rows, job)
+            # add ARCHIVED phase as well for services with version 1.0 that already support this
+            if job_phases.ARCHIVED in phases and job_phases.ARCHIVED in job.phase:
+                    _register_job_reference_for_table(rows, job)
     (console_width, console_height) = console.get_terminal_size()
 
     table = tt.Texttable(max_width=console_width)
