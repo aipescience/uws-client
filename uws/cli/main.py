@@ -102,6 +102,9 @@ def show_job(url, user_name, password, id, wait, phase):
 
     job = uws_client.get_job(id, wait, phase)
 
+    if wait and job.version != "1.1":
+        print "Warning: Wait keyword is (probably) not supported by the server's UWS version %s (need 1.1). Server will probably return immediately, wait is ignored." % job.version
+
     _print_job(job)
 
 
