@@ -339,3 +339,119 @@ class ErroredJobTest(unittest.TestCase):
         self.assertEqual(error.messages[0], 'Remote MySQL server has gone away')
 
         self.assertEqual(job.job_info, [])
+
+
+class JobListNamespaceTest(unittest.TestCase):
+    def setUp(self):
+        self.xml = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs xmlns="http://www.ivoa.net/xml/UWS/v1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <jobref id="2014-06-03T15:33:29:4235" xlink:href="https://www.cosmosim.org/uws/query/335912448787925" xlink:type="simple">
+    <phase>COMPLETED</phase>
+  </jobref>
+</jobs>
+        '''[1:]
+
+    def test(self):
+        job_list = UWS.models.Jobs(self.xml)
+
+        self.assertEqual(len(job_list.job_reference), 1)
+
+        job_list_str = "Job '2014-06-03T15:33:29:4235' in phase 'COMPLETED' - https://www.cosmosim.org/uws/query/335912448787925\n"
+        self.assertEqual(str(job_list), job_list_str)
+
+        job1 = job_list.job_reference[0]
+        self.assertEqual(job1.id, '2014-06-03T15:33:29:4235')
+        self.assertEqual(job1.phase, ['COMPLETED'])
+        self.assertEqual(job1.reference.type, "simple")
+        self.assertEqual(job1.reference.href, "https://www.cosmosim.org/uws/query/335912448787925")
+
+class JobListNamespace2Test(JobListNamespaceTest):
+    def setUp(self):
+        self.xml = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<u:jobs xmlns:u="http://www.ivoa.net/xml/UWS/v1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <u:jobref id="2014-06-03T15:33:29:4235" xlink:href="https://www.cosmosim.org/uws/query/335912448787925" xlink:type="simple">
+    <u:phase>COMPLETED</u:phase>
+  </u:jobref>
+</u:jobs>
+        '''[1:]
+
+
+class ErroredJobNamespaceTest(ErroredJobTest):
+    def setUp(self):
+        self.xml = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://www.ivoa.net/xml/UWS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <jobId>1177277256137938</jobId>
+  <ownerId>adrian</ownerId>
+  <phase>ERROR</phase>
+  <quote xsi:nil="true"/>
+  <startTime>2014-05-09T15:13:48+02:00</startTime>
+  <endTime>2014-05-09T15:13:48+02:00</endTime>
+  <executionDuration>30</executionDuration>
+  <destruction>2999-12-31T00:00:00+01:00</destruction>
+  <parameters>
+    <parameter id="database">cosmosim_user_adrian</parameter>
+    <parameter id="table">2014-05-09T15:13:50:6896</parameter>
+    <parameter id="query">select avg(x) from `MDPL`.`Particles88tmp`;
+-- The query plan used to run this query: --
+--------------------------------------------
+--
+-- CALL paquExec('SELECT  COUNT(x) AS `cnt_avg(x)`, SUM(x) AS `sum_avg(x)` FROM `MDPL`.`Particles88tmp` ', 'aggregation_tmp_9424512')
+-- USE spider_tmp_shard
+-- SET @i=0
+-- CREATE TABLE cosmosim_user_adrian.`2014-05-09T15:13:50:6896` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,   (SUM(`sum_avg(x)`) / SUM(`cnt_avg(x)`)) AS `avg(x)`&#13; FROM `aggregation_tmp_9424512`   
+-- CALL paquDropTmp('aggregation_tmp_9424512')
+</parameter>
+    <parameter id="queue">short</parameter>
+  </parameters>
+  <results/>
+  <errorSummary type="transient" hasDetail="false">
+    <message>Remote MySQL server has gone away</message>
+  </errorSummary>
+</job>
+        '''[1:]
+
+
+class CompletedJobNamespaceTest(CompletedJobTest):
+    def setUp(self):
+        self.xml = '''
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://www.ivoa.net/xml/UWS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <jobId>335912448787925</jobId>
+  <ownerId>adrian</ownerId>
+  <phase>COMPLETED</phase>
+  <quote xsi:nil="true"/>
+  <startTime>2014-06-03T15:33:30+02:00</startTime>
+  <endTime>2014-06-03T15:33:31+02:00</endTime>
+  <executionDuration>30</executionDuration>
+  <destruction>2999-12-31T00:00:00+01:00</destruction>
+  <parameters>
+    <parameter id="database">cosmosim_user_adrian</parameter>
+    <parameter id="table">2014-06-03T15:33:29:4235</parameter>
+    <parameter id="query">SELECT 0.25*(0.5+FLOOR(LOG10(Mvir)/0.25)) AS log_mass, COUNT(*) AS num&#13;
+FROM MDR1.BDMV&#13;
+WHERE snapnum=85 &#13;
+GROUP BY FLOOR(LOG10(Mvir)/0.25)&#13;
+ORDER BY log_mass
+-- The query plan used to run this query: --
+--------------------------------------------
+--
+-- CALL paquExec('SELECT 0.25 * ( 0.5 + FLOOR( LOG10( `Mvir` ) / 0.25 ) ) AS `log_mass`,COUNT(*) AS `num`,FLOOR( LOG10( `Mvir` ) / 0.25 ) AS `_FLOOR_LOG10_Mvir_/_0__25_` FROM MDR1.BDMV WHERE ( `snapnum` = 85 )  GROUP BY FLOOR( LOG10( Mvir ) / 0.25 )  ', 'aggregation_tmp_75797262')
+-- USE spider_tmp_shard
+-- SET @i=0
+-- CREATE TABLE cosmosim_user_adrian.`2014-06-03T15:33:29:4235` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,  `log_mass`,SUM(`num`) AS `num`&#13; FROM `aggregation_tmp_75797262`  GROUP BY `_FLOOR_LOG10_Mvir_/_0__25_` ORDER BY `log_mass` ASC 
+-- CALL paquDropTmp('aggregation_tmp_75797262')
+</parameter>
+    <parameter id="queue">short</parameter>
+  </parameters>
+  <results>
+    <result id="csv" xlink:href="https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/csv" xlink:type="simple"/>
+    <result id="votable.xml" xlink:href="https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votable" xlink:type="simple"/>
+    <result id="votableB1.xml" xlink:href="https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votableB1" xlink:type="simple"/>
+    <result id="votableB2.xml" xlink:href="https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votableB2" xlink:type="simple"/>
+  </results>
+</job>
+        '''[1:]
+
