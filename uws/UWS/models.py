@@ -48,6 +48,9 @@ class JobPhases(object):
               ERROR, ABORTED, UNKNOWN, HELD,
               SUSPENDED, ARCHIVED]
 
+    # phases for which blocking behaviour can occur:
+    active_phases = [PENDING, QUEUED, EXECUTING]
+
     versions = {
         COMPLETED: ['1.0', '1.1'],
         PENDING: ['1.0', '1.1'],

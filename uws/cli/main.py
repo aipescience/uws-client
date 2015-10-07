@@ -21,6 +21,7 @@ def handle_error(handler):
                 print "An error occurred:\n   %s" % e.msg
                 return
             else:
+                print "An error occurred:\n   %s" % e.msg
                 print e.raw
                 raise
     return handle
@@ -96,10 +97,10 @@ def _register_job_reference_for_table(rows, jobref):
 
 
 @handle_error
-def show_job(url, user_name, password, id):
+def show_job(url, user_name, password, id, wait, phase):
     uws_client = UWS.client.Client(url=url, user=user_name, password=password)
 
-    job = uws_client.get_job(id)
+    job = uws_client.get_job(id, wait, phase)
 
     _print_job(job)
 
@@ -275,6 +276,32 @@ def _print_job(job):
     table.add_rows(rows)
     print table.draw()
 
+# check validity of wait and phases:
+def _check_job_wait_args(arguments):
+    wait = arguments.wait
+
+    phase = None
+    nphase = 0
+
+    if arguments.pending:
+        phase = UWS.models.JobPhases.PENDING
+        nphase += 1
+    if arguments.queued:
+        phase = UWS.models.JobPhases.QUEUED
+        nphase += 1
+    if arguments.executing:
+        phase = UWS.models.JobPhases.EXECUTING
+        nphase += 1
+
+    # only exactly one phase is supported
+    if nphase > 1:
+        raise UWS.UWSError("Only one phase supported for wait.")
+
+    if wait is None and phase is not None:
+        raise UWS.UWSError("Additional phase for 'job show' only allowed in combination with 'wait'-keyword.")
+
+    return wait, phase
+
 
 # checks validity of arguments and returns a list of arguments
 def _check_job_parameter_args(arguments):
@@ -338,7 +365,8 @@ def main():
 
     if arguments.command == "job":
         if arguments.job_command == "show":
-            show_job(arguments.host, arguments.user, arguments.password, arguments.id)
+            wait, phase = _check_job_wait_args(arguments)
+            show_job(arguments.host, arguments.user, arguments.password, arguments.id, wait, phase)
         elif arguments.job_command == "phase":
             show_phase(arguments.host, arguments.user, arguments.password, arguments.id)
         elif arguments.job_command == "new":
