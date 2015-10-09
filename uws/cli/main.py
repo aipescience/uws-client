@@ -8,7 +8,7 @@ from uws.lib.terminalsize import terminalsize as console
 import cli_parser
 from uws import UWS
 
-debug = True
+debug = False
 
 
 def handle_error(handler):
@@ -103,7 +103,7 @@ def show_job(url, user_name, password, id, wait, phase):
     job = uws_client.get_job(id, wait, phase)
 
     if wait and job.version != "1.1":
-        print "Warning: Wait keyword is (probably) not supported by the server's UWS version %s (need 1.1). Server will probably return immediately, wait is ignored." % job.version
+        print "Warning: Wait keyword is (probably) not supported by the server's UWS version %s (need 1.1). Server will probably ignore wait and return immediately." % job.version
 
     _print_job(job)
 
@@ -281,27 +281,19 @@ def _print_job(job):
 
 # check validity of wait and phases:
 def _check_job_wait_args(arguments):
+
     wait = arguments.wait
-
-    phase = None
-    nphase = 0
-
-    if arguments.pending:
-        phase = UWS.models.JobPhases.PENDING
-        nphase += 1
-    if arguments.queued:
-        phase = UWS.models.JobPhases.QUEUED
-        nphase += 1
-    if arguments.executing:
-        phase = UWS.models.JobPhases.EXECUTING
-        nphase += 1
-
-    # only exactly one phase is supported
-    if nphase > 1:
-        raise UWS.UWSError("Only one phase supported for wait.")
+    phase = arguments.phase
 
     if wait is None and phase is not None:
-        raise UWS.UWSError("Additional phase for 'job show' only allowed in combination with 'wait'-keyword.")
+        raise RuntimeError("Additional phase for 'job show' only allowed in combination with 'wait'-keyword.")
+
+    if phase:
+        if phase.upper() in UWS.models.JobPhases.active_phases:
+            phase = phase.upper();
+        else:
+            active_phases = ', '.join(UWS.models.JobPhases.active_phases)
+            raise RuntimeError("Phase '" + phase + "' is not supported with WAIT keyword, choose one of the active phases: " + active_phases)
 
     return wait, phase
 

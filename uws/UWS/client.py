@@ -56,12 +56,13 @@ class Client(object):
         return params
 
     def _validate_and_parse_wait(self, wait, phase=None):
-        try:
+        # wait must be positive integer or -1
+        if wait.isdigit() or wait == '-1':
             duration = int(wait)
-        except:
-            raise UWSError("Value for wait-keyword must be integer: %s" % str(wait))
+        else:
+            raise UWSError("Value for wait-keyword must be positive integer or -1: %s" % str(wait))
 
-        params = [("WAIT", wait)]
+        params = [("WAIT", duration)]
 
         if phase:
             if phase not in models.JobPhases.active_phases:
@@ -74,8 +75,6 @@ class Client(object):
         params = None
         if wait:
             params = self._validate_and_parse_wait(wait, phase)
-
-        print 'params: ', wait, phase, params
 
         try:
             response = self.connection.get(id, params)
