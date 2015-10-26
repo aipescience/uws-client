@@ -89,6 +89,7 @@ optional arguments:
   `--archived`         [UWS1.1] show (deleted) jobs archived on the server
   `--after TIMESTAMP`  [UWS1.1] show only jobs started after given time
   `--last  NUMBER`     [UWS1.1] show only most recently started NUMBER of jobs
+  `-w WAIT`, `--wait WAIT`   [UWS1.1] wait WAIT seconds until job phase changes
 
 Specifying any of the specific job phases will only show those jobs with the
 corresponding phase. 

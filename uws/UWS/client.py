@@ -20,16 +20,17 @@ class Client(object):
         params = None
         if filters:
             params = self._validate_and_parse_filters(filters)
-            print 'params: ', params ## debug
+            # print 'params: ', params ## debug
 
         try:
             response = self.connection.get('', params)
-        except:
-            # TODO: put a warning here that parameters are going to be ignored!
+        except Exception as e1:
+            print 'Warning: GET request for job list failed with error: \n    %s' % (str(e1))
+            print 'Retrying now without any parameters.'
             try:
                 response = self.connection.get('')
             except Exception as e:
-                raise UWSError(str(e))
+               raise UWSError(str(e))
 
         raw = response.read()
 
