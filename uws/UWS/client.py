@@ -25,6 +25,7 @@ class Client(object):
         try:
             response = self.connection.get('', params)
         except:
+            # TODO: put a warning here that parameters are going to be ignored!
             try:
                 response = self.connection.get('')
             except Exception as e:
@@ -89,16 +90,41 @@ class Client(object):
                 raise UWSError("Value for 'last' argument must be a (positive) integer: %s" % (str(last)))
 
             if last < 0:
-                raise UWSError("Value for 'last' argument must be a *positive* integer: %s" % (str(last)))
+                raise UWSError("Value for 'last' argument must be a (positive) integer: %s" % (str(last)))
             params.append(("LAST", last))
+
 
         return params
 
-    def get_job(self, id):
+    def _validate_and_parse_wait(self, wait, phase=None):
+        # wait must be positive integer or -1
+        if wait.isdigit() or wait == '-1':
+            duration = int(wait)
+        else:
+            raise UWSError("Value for wait-keyword must be positive integer or -1: %s" % str(wait))
+
+        params = [("WAIT", duration)]
+
+        if phase:
+            if phase not in models.JobPhases.active_phases:
+                raise UWSError("Given phase '%s' is not an active phase, 'wait' with this phase is not supported." % phase)
+            params.append(("PHASE", phase))
+
+        return params
+
+    def get_job(self, id, wait=None, phase=None):
+        params = None
+        if wait:
+            params = self._validate_and_parse_wait(wait, phase)
+
         try:
-            response = self.connection.get(id)
-        except Exception as e:
-            raise UWSError(str(e))
+            response = self.connection.get(id, params)
+        except:
+            # TODO: put a warning here that parameters are going to be ignored!
+            try:
+                response = self.connection.get(id)
+            except Exception as e:
+                raise UWSError(str(e))
 
         raw = response.read()
         try:
@@ -107,7 +133,6 @@ class Client(object):
             raise UWSError("Malformatted response. Are you sure the host you specified is a IVOA UWS service?", raw)
         except Exception as e:
             raise e
-            # TODO: had problems with "raise e" here: AttributeError: 'NoneType' object has no attribute 'text'
 
         return result
 

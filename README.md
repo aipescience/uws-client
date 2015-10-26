@@ -73,7 +73,7 @@ List all jobs on service:
 -------------------------
 
 usage: `uws list [-h] [-c] [-p] [-q] [-e] [-E] [-a] [--unknown] [--held]
-                   [--suspended]`
+                   [--suspended] [--archived]`
 
 optional arguments:  
   `-h`, `--help`       show this help message and exit  
@@ -86,8 +86,9 @@ optional arguments:
   `--unknown`          show unknown state jobs  
   `--held`             show held jobs  
   `--suspended`        show suspended jobs  
-  `--after TIMESTAMP`  show only jobs after given time
-  `--last  NUMBER`     show only last NUMBER jobs
+  `--archived`         [UWS1.1] show (deleted) jobs archived on the server
+  `--after TIMESTAMP`  [UWS1.1] show only jobs started after given time
+  `--last  NUMBER`     [UWS1.1] show only most recently started NUMBER of jobs
 
 Specifying any of the specific job phases will only show those jobs with the
 corresponding phase. 
@@ -117,13 +118,15 @@ optional arguments:
 Show job:
 ---------
 
-usage: `uws job show [-h] id`
+usage: `uws job show [-h] id [-w [WAIT]] [-s PHASE] `
 
 positional arguments:  
   `id`          `job id`
 
 optional arguments:  
-  `-h`, `--help`  show this help message and exit
+  `-h`, `--help`                show this help message and exit  
+  `-w [WAIT]`, `--wait [WAIT]`  [UWS1.1] wait for phase change before returning, but at most the specified amount of seconds or infinitely, if no value is given  
+  `-s PHASE`, `--phase PHASE`   [UWS1.1] required phase while waiting  
 
 
 New job:
