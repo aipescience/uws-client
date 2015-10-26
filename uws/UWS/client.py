@@ -20,7 +20,9 @@ class Client(object):
 
         try:
             response = self.connection.get('', params)
-        except:
+        except Exception as e1:
+            print 'Warning: GET request for job list failed with error: \n    %s' % (str(e1))
+            print 'Retrying now without any parameters.'
             # PROBLEM: calling self.connection.get() a second time and reusing the connection 
             # without calling a getresponse() or close() or something beforehand, 
             # will lead to a httplib CannotSendRequest() error!
