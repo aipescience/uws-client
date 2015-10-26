@@ -69,7 +69,7 @@ class Client(object):
                 # The day defaults to current day, not to '01', if no day is 
                 # given (e.g. '2010-09'->'2010-09-06').
                 # Let's tell the user how the given value was interpreted:
-                if str(date) != 'after':
+                if str(date) != str(after):
                     print "Note: Changed value for keyword 'after' from '%s' to '%s'." % (after, str(date))
 
             except:

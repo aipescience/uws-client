@@ -41,7 +41,7 @@ def build_job_argparse(subparsers):
     job_subparsers = parser_job.add_subparsers(dest='job_command', help='commands for manipulating jobs')
     parser_job_show = job_subparsers.add_parser('show', help='show the specific job')
     parser_job_show.add_argument('id', help='job id')
-    parser_job_show.add_argument('-w', '--wait', nargs='?', const=-1, default=None, help='[UWS1.1] wait for phase change before returning, but at most the specified amount of seconds or infinitely, if no value is given')
+    parser_job_show.add_argument('-w', '--wait', nargs='?', const='-1', default=None, help='[UWS1.1] wait for phase change before returning, but at most the specified amount of seconds or infinitely, if no value is given')
     parser_job_show.add_argument('-s', '--phase', help='[UWS1.1] required phase while waiting')
 
     parser_job_phase = job_subparsers.add_parser('phase', help='show the phase of specific job')
