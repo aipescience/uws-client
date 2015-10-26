@@ -207,6 +207,9 @@ class Job(BaseUWSModel):
             # again find proper UWS namespace-string as prefix for search paths in find
             uws_flavour = UWS1Flavour(parsed.nsmap)
 
+            if parsed.get("version"):
+                self.version = parsed.get("version")
+
             self.job_id = parsed.find(uws_flavour.jobId, namespaces=parsed.nsmap).text
 
             self.run_id = self._get_optional(parsed, uws_flavour.runId)
