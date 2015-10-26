@@ -21,7 +21,9 @@ class Client(object):
         try:
             response = self.connection.get('', params)
         except:
-            # TODO: put a warning here that parameters are going to be ignored!
+            # PROBLEM: calling self.connection.get() a second time and reusing the connection 
+            # without calling a getresponse() or close() or something beforehand, 
+            # will lead to a httplib CannotSendRequest() error!
             try:
                 response = self.connection.get('')
             except Exception as e:
