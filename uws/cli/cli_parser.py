@@ -25,12 +25,12 @@ def build_list_argparse(subparsers):
     parser_list.add_argument('-e', '--executing', action='store_true', help='show executing jobs')
     parser_list.add_argument('-E', '--error', action='store_true', help='show jobs with errors')
     parser_list.add_argument('-a', '--aborted', action='store_true', help='show aborted jobs')
-    parser_list.add_argument('-A', '--archived', action='store_true', help='show archived jobs (UWS 1.1)')
+    parser_list.add_argument('-A', '--archived', action='store_true', help='[UWS1.1] show (deleted) jobs archived on the server')
     parser_list.add_argument('--unknown', action='store_true', help='show unknown state jobs')
     parser_list.add_argument('--held', action='store_true', help='show held jobs')
     parser_list.add_argument('--suspended', action='store_true', help='show suspended jobs')
-    parser_list.add_argument('--after', action='store', help='show jobs submitted after given time')
-    parser_list.add_argument('--last', action='store', help='show the last N jobs only')
+    parser_list.add_argument('--after', action='store', help='[UWS1.1] show only jobs started after given UTC time or local time + timezone')
+    parser_list.add_argument('--last', action='store', help='[UWS1.1] show only most recently started jobs')
 
     return parser_list
 
@@ -41,8 +41,8 @@ def build_job_argparse(subparsers):
     job_subparsers = parser_job.add_subparsers(dest='job_command', help='commands for manipulating jobs')
     parser_job_show = job_subparsers.add_parser('show', help='show the specific job')
     parser_job_show.add_argument('id', help='job id')
-    parser_job_show.add_argument('-w', '--wait', nargs='?', const=-1, default=None, help='wait for phase change before returning, but at most the specified amount of seconds or infinitely, if no value is given')
-    parser_job_show.add_argument('-s', '--phase', help='required phase while waiting')
+    parser_job_show.add_argument('-w', '--wait', nargs='?', const=-1, default=None, help='[UWS1.1] wait for phase change before returning, but at most the specified amount of seconds or infinitely, if no value is given')
+    parser_job_show.add_argument('-s', '--phase', help='[UWS1.1] required phase while waiting')
 
     parser_job_phase = job_subparsers.add_parser('phase', help='show the phase of specific job')
     parser_job_phase.add_argument('id', help='job id')

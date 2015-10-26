@@ -87,9 +87,9 @@ optional arguments:
   `--held`             show held jobs  
   `--suspended`        show suspended jobs  
   `--archived`         [UWS1.1] show (deleted) jobs archived on the server
-  `--after TIMESTAMP`  [UWS1.1] show only jobs started after given time
-  `--last  NUMBER`     [UWS1.1] show only most recently started NUMBER of jobs
-  `-w WAIT`, `--wait WAIT`   [UWS1.1] wait WAIT seconds until job phase changes
+  `--after TIMESTAMP`  [UWS1.1] show only jobs started after given UTC time,
+                        also works with local time, if timezone information is added (e.g. --after 2015-09-10T10:00+02:00 for European/Paris, day saving time)
+  `--last  NUMBER`     [UWS1.1] show only NUMBER most recently started jobs
 
 Specifying any of the specific job phases will only show those jobs with the
 corresponding phase. 
