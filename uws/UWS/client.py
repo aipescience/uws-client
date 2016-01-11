@@ -20,12 +20,13 @@ class Client(object):
 
         try:
             response = self.connection.get('', params)
-        except:
-            # TODO: put a warning here that parameters are going to be ignored!
-            try:
-                response = self.connection.get('')
-            except Exception as e:
-                raise UWSError(str(e))
+        except Exception as e:
+            # Do not try to make a seconds request without parameters here, 
+            # because cannot call self.connection.get() a second time and reusing the connection 
+            # without calling a getresponse() or close() or something beforehand.
+            # (This would lead to a httplib CannotSendRequest() error!)
+            # Let's just raise the error immediately.
+            raise UWSError(str(e))
 
         raw = response.read()
 
