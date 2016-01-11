@@ -6,7 +6,9 @@ from subprocess import check_output, CalledProcessError
 install_requires = [
     "argparse>=1.2.1",
     "texttable>=0.8.1",
-    "lxml"
+    "lxml",
+    "python-dateutil",
+    "pytz"
 ]
 
 # get the long_description from the README
