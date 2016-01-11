@@ -6,3 +6,6 @@ env
 
 dist
 uws_client.egg-info
+
+.coverage
+cover

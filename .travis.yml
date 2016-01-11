@@ -1,10 +1,14 @@
 language: python
 sudo: false
-cache: pip
+cache:
+  directories:
+  - $HOME/virtualenv
 python:
 - 2.7
 install:
 - pip install -r requirements.pip
 - pip install -r requirements-dev.pip
 script:
-- nosetests
+- nosetests --with-coverage --cover-tests --cover-html --cover-package=uws
+after_success:
+- coveralls
