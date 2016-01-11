@@ -8,6 +8,7 @@ python:
 install:
 - pip install -r requirements.pip
 - pip install -r requirements-dev.pip
+- pip install coveralls
 script:
 - nosetests --with-coverage --cover-tests --cover-html --cover-package=uws
 after_success:
