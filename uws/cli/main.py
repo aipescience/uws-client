@@ -28,12 +28,16 @@ def handle_error(handler):
 
 
 @handle_error
-def list_jobs(url, user_name, password, phases):
+def list_jobs(url, user_name, password, phases, after=None, last=None):
     uws_client = UWS.client.Client(url=url, user=user_name, password=password)
 
     filters = {}
     if phases:
         filters['phases'] = phases
+    if after:
+        filters['after'] = after
+    if last:
+        filters['last'] = last
 
     jobs = uws_client.get_job_list(filters)
 
@@ -302,7 +306,7 @@ def _check_job_wait_args(arguments):
 def _check_job_parameter_args(arguments):
     argument_list = {}
     for argument in arguments:
-        # valid arguments are of the form <paramter>=<value>
+        # valid arguments are of the form <parameter>=<value>
         argument_pair = argument.split("=", 1)
         if len(argument_pair) != 2:
             raise RuntimeError('Malformatted parameter found: %s' % (", ".join(argument_pair)))
@@ -316,6 +320,21 @@ def _check_job_parameter_args(arguments):
         argument_list[argument_pair[0]] = argument_pair[1]
 
     return argument_list
+
+
+def _check_joblist_after(argument):
+    # TODO: should check here for proper time format or only when validating parameters later on?
+    return argument
+
+
+def _check_joblist_last(argument):
+    #try:
+    #    nlast = int(argument)
+    #except ValueError:
+    #    sys.exit("Error: Value for 'last' argument must be an integer: %s" % (str(argument)))
+    #return nlast
+    # checks will be done in _validate_and_parse_filters
+    return argument
 
 
 def main():
@@ -356,7 +375,15 @@ def main():
         if arguments.archived:
             phases.append(UWS.models.JobPhases.ARCHIVED)
 
-        list_jobs(arguments.host, arguments.user, arguments.password, phases)
+        after = None
+        if arguments.after:
+            after = _check_joblist_after(arguments.after)
+
+        last = None
+        if arguments.last:
+            last = _check_joblist_last(arguments.last)
+
+        list_jobs(arguments.host, arguments.user, arguments.password, phases, after, last)
 
     if arguments.command == "job":
         if arguments.job_command == "show":

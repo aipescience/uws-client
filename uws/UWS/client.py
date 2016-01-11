@@ -4,6 +4,9 @@ from lxml.etree import XMLSyntaxError as XMLSyntaxError
 import connection as UWSConnection
 import models
 from errors import UWSError
+from datetime import datetime
+import dateutil.parser
+import pytz
 
 
 class Client(object):
@@ -17,6 +20,7 @@ class Client(object):
         params = None
         if filters:
             params = self._validate_and_parse_filters(filters)
+            # print 'params: ', params ## debug
 
         try:
             response = self.connection.get('', params)
@@ -48,11 +52,48 @@ class Client(object):
         if filters_copy:
             raise UWSError("Unknown filter properties %s", filters_copy.keys())
 
-        for phase in phases:
-            if phase not in models.JobPhases.phases:
-                raise UWSError("Unknown phase %s in filter", phase)
+        params = []
 
-        params = [("PHASE", phase) for phase in phases]
+        if phases:
+            for phase in phases:
+                if phase not in models.JobPhases.phases:
+                    raise UWSError("Unknown phase %s in filter", phase)
+                params.append(("PHASE", phase))
+
+        if after:
+            # TODO: Allow to provide local time and convert here to UTC?
+            # TODO: We may encounter more troubles with microseconds, if ',' used instead of '.'(e.g. German systems)
+
+            try:
+                date = dateutil.parser.parse(after)
+                # The day defaults to current day, not to '01', if no day is 
+                # given (e.g. '2010-09'->'2010-09-06').
+                # Let's tell the user how the given value was interpreted:
+                if str(date) != str(after):
+                    print "Note: Changed value for keyword 'after' from '%s' to '%s'." % (after, str(date))
+
+            except:
+                raise UWSError("Date time format could not be parsed, expecting UTC in ISO 8601:2004 format or compatible: %s" % (str(after)))
+
+            # Convert from given time (with attached timezone information) to UTC time
+            if date.utcoffset() is not None:
+                utz = pytz.timezone('UTC')
+                date = date.astimezone(utz).replace(tzinfo=None)
+                print "Note: Date time was converted to UTC time: %s" %(str(date))
+
+            date = date.isoformat()
+            params.append(("AFTER", date))
+
+        if last:
+            try:
+                last = int(last)
+            except:
+                raise UWSError("Value for 'last' argument must be a (positive) integer: %s" % (str(last)))
+
+            if last < 0:
+                raise UWSError("Value for 'last' argument must be a (positive) integer: %s" % (str(last)))
+            params.append(("LAST", last))
+
 
         return params
 

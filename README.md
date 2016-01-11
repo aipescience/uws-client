@@ -86,11 +86,13 @@ optional arguments:
   `--unknown`          show unknown state jobs  
   `--held`             show held jobs  
   `--suspended`        show suspended jobs  
-  `--archived`         [UWS1.1] show (deleted) jobs archived on the server
-
+  `--archived`         [UWS1.1] show (deleted) jobs archived on the server  
+  `--after TIMESTAMP`  [UWS1.1] show only jobs started after given UTC time,
+                        also works with local time, if timezone information is added (e.g. --after 2015-09-10T10:00+02:00 for European/Paris, day saving time)  
+  `--last  NUMBER`     [UWS1.1] show only NUMBER most recently started jobs
 
 Specifying any of the specific job phases will only show those jobs with the
-corresponding phase
+corresponding phase. You can even combine two or more phases by appending multiple phase filters, e.g. if you want all jobs with phase ERROR and additionally the ABORTED jobs, then use `--error --aborted`.
 
 
 Job handling:
@@ -104,8 +106,8 @@ positional arguments:
     `show`                show the specific job  
     `new`                 create a new job  
     `set`                 set parameters for the specific job  
-    `run`                 run the specific job if its state is pending
-    `phase`               show the phase of a specific job
+    `run`                 run the specific job if its state is pending  
+    `phase`               show the phase of a specific job  
     `abort`               aborts the execution of a specific job  
     `delete`              delete a specific job  
     `results`             download results of a specific job  
