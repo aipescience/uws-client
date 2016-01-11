@@ -20,16 +20,13 @@ class Client(object):
 
         try:
             response = self.connection.get('', params)
-        except Exception as e1:
-            print 'Warning: GET request for job list failed with error: \n    %s' % (str(e1))
-            print 'Retrying now without any parameters.'
-            # PROBLEM: calling self.connection.get() a second time and reusing the connection 
-            # without calling a getresponse() or close() or something beforehand, 
-            # will lead to a httplib CannotSendRequest() error!
-            try:
-                response = self.connection.get('')
-            except Exception as e:
-                raise UWSError(str(e))
+        except Exception as e:
+            # Do not try to make a seconds request without parameters here, 
+            # because cannot call self.connection.get() a second time and reusing the connection 
+            # without calling a getresponse() or close() or something beforehand.
+            # (This would lead to a httplib CannotSendRequest() error!)
+            # Let's just raise the error immediately.
+            raise UWSError(str(e))
 
         raw = response.read()
 
