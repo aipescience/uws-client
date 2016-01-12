@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 from setuptools import setup, find_packages
 from subprocess import check_output, CalledProcessError
 
@@ -19,7 +18,6 @@ with open('README.md') as f:
 try:
     tag = check_output(["git", "describe", "--tags"]).strip()
 except CalledProcessError:
-    #sys.exit('Error: current HEAD is not tagged.')
     print 'Warning: current HEAD is not tagged, using "unversioned" instead.'
     tag = "unversioned"
 
@@ -30,9 +28,10 @@ setup(
     download_url='http://github.com/aipescience/uws-client/archive/%s.tar.gz' % tag,
     packages=find_packages(),
     license=u'Apache License (2.0)',
-    author=u'AIP E-Science - Adrian M. Partl',
-    maintainer=u'Adrian M. Partl',
-    maintainer_email=u'adrian@partl.net',
+    author=u'Adrian M. Partl',
+    author_email='adrian@partl.net',
+    maintainer=u'AIP E-Science',
+    maintainer_email=u'escience@aip.de',
     description=u'a command line client for IVOA UWS services, plus models for development',
     long_description=long_description,
     include_package_data=True,
