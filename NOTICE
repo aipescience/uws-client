@@ -3,8 +3,10 @@ THIS NOTICE APPLIES TO ALL FILES CONTAINED IN THIS AND UNDERLYING FOLDERS
 -------------------------------------------------------------------------
 
    uws - A client for UWS IVOA services
-   Copyright (c) 2013 Adrian M. Partl <apartl@aip.de>, 
-                      AIP E-Science (www.aip.de)
+   Copyright (c) 2013-2016  Adrian M. Partl <adrian@partl.net>,
+                            Kristin Riebe <kriebe@aip.de>,
+                            Jochen Klar <jklar@aip.de>,
+                            AIP E-Science <escience@aip.de>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
