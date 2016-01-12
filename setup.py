@@ -10,18 +10,13 @@ install_requires = [
     "pytz"
 ]
 
-# get the current tag using git describe
-try:
-    tag = check_output(["git", "describe", "--tags"]).strip()
-except CalledProcessError:
-    print 'Warning: current HEAD is not tagged, using "unversioned" instead.'
-    tag = "unversioned"
+version = "1.1.3"
 
 setup(
     name='uws-client',
-    version=tag,
+    version=version,
     url='http://github.com/aipescience/uws-client/',
-    download_url='http://github.com/aipescience/uws-client/archive/%s.tar.gz' % tag,
+    download_url='http://github.com/aipescience/uws-client/archive/%s.tar.gz' % version,
     packages=find_packages(),
     license=u'Apache License (2.0)',
     author=u'Adrian M. Partl',
