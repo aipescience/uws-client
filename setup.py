@@ -10,10 +10,6 @@ install_requires = [
     "pytz"
 ]
 
-# get the long_description from the README
-with open('README.md') as f:
-    long_description = f.read()
-
 # get the current tag using git describe
 try:
     tag = check_output(["git", "describe", "--tags"]).strip()
@@ -33,7 +29,7 @@ setup(
     maintainer=u'AIP E-Science',
     maintainer_email=u'escience@aip.de',
     description=u'a command line client for IVOA UWS services, plus models for development',
-    long_description=long_description,
+    long_description='This is a client for IVOA Virtual Observatroy UWS services. It can be used to access UWS services directly or through Basic Authentication. Please visit https://github.com/aipescience/uws-client/blob/master/README.md for how to use the software.',
     include_package_data=True,
     install_requires=install_requires,
     entry_points={
