@@ -228,7 +228,7 @@ class Job(BaseUWSModel):
             self.owner_id = parsed.find(uws_flavour.ownerId).text
             self.phase = [parsed.find(uws_flavour.phase).text]
             self.quote = self._get_optional(parsed, uws_flavour.quote)
-            self.creationTime = self._get_optional(parsed, uws_flavour.creationTime)
+            self.creation_time = self._get_optional(parsed, uws_flavour.creationTime)
             self.start_time = parsed.find(uws_flavour.startTime).text
             self.end_time = parsed.find(uws_flavour.endTime).text
             self.execution_duration = int(parsed.find(uws_flavour.executionDuration).text)
@@ -264,6 +264,7 @@ class Job(BaseUWSModel):
         str += "OwnerId : '%s'\n" % self.owner_id
         str += "Phase : '%s'\n" % ', '.join(self.phase)
         str += "Quote : '%s'\n" % self.quote
+        str += "CreationTime : '%s'\n" % self.creation_time
         str += "StartTime : '%s'\n" % self.start_time
         str += "EndTime : '%s'\n" % self.end_time
         str += "ExecutionDuration : '%s'\n" % self.execution_duration

@@ -284,13 +284,16 @@ def _print_job(job):
     rows.append(["Job id", job.job_id])
 
     if(job.run_id):
-        rows.append(["UWS run id", job.run_id])
+        rows.append(["Run id", job.run_id])
+    if(job.owner_id):
+        rows.append(["Owner id", job.owner_id])
 
-    rows.append(["Owner id", job.owner_id])
     rows.append(["Phase", ", ".join(job.phase)])
 
     if(job.quote):
         rows.append(["Quote", job.quote])
+    if(job.creation_time):
+        rows.append(["Creation time", job.creation_time])
 
     rows.append(["Start time", job.start_time])
     rows.append(["End time", job.end_time])
