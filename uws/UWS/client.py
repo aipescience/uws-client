@@ -66,7 +66,7 @@ class Client(object):
 
             try:
                 date = dateutil.parser.parse(after)
-                # The day defaults to current day, not to '01', if no day is 
+                # The day defaults to current day, not to '01', if no day is
                 # given (e.g. '2010-09'->'2010-09-06').
                 # Let's tell the user how the given value was interpreted:
                 if str(date) != str(after):
@@ -79,7 +79,7 @@ class Client(object):
             if date.utcoffset() is not None:
                 utz = pytz.timezone('UTC')
                 date = date.astimezone(utz).replace(tzinfo=None)
-                print "Note: Date time was converted to UTC time: %s" %(str(date))
+                print "Note: Date time was converted to UTC time: %s" % (str(date))
 
             date = date.isoformat()
             params.append(("AFTER", date))
@@ -88,12 +88,11 @@ class Client(object):
             try:
                 last = int(last)
             except:
-                raise UWSError("Value for 'last' argument must be a (positive) integer: %s" % (str(last)))
+                raise UWSError("Value for 'last' argument must be a positive integer: %s" % (str(last)))
 
-            if last < 0:
-                raise UWSError("Value for 'last' argument must be a (positive) integer: %s" % (str(last)))
+            if last < 1:
+                raise UWSError("Value for 'last' argument must be a positive integer: %s" % (str(last)))
             params.append(("LAST", last))
-
 
         return params
 
@@ -121,7 +120,7 @@ class Client(object):
         try:
             response = self.connection.get(id, params)
         except:
-            # Do not make a second request wihtout params, throw error
+            # Do not make a second request without params, throw error
             # immediately
             raise UWSError(str(e))
 
@@ -143,7 +142,7 @@ class Client(object):
 
         raw = response.read()
         result = raw
-        
+
         return result
 
     def new_job(self, args={}):

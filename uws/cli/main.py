@@ -46,7 +46,7 @@ def list_jobs(url, user_name, password, phases, after=None, last=None):
     # we will apply client side filtering anyways, since we are not
     # sure that a UWS service is version 1.1 and supports server side
     # filtering.
-    rows = [["ID", "Job name", "Status"]]
+    rows = [["Job Id", "[Run]", "[Owner]", "[Creation Time]", "Status"]]
     for job in jobs.job_reference:
         if not phases or jobs.version == "1.1":
             _register_job_reference_for_table(rows, job)
@@ -74,9 +74,29 @@ def list_jobs(url, user_name, password, phases, after=None, last=None):
                     _register_job_reference_for_table(rows, job)
     (console_width, console_height) = console.get_terminal_size()
 
+    # Now we have the rows all stored. Check if all columns exist and remove
+    # empty columns for a more friendly output.
+
+    # Set existing_col to 0, i.e. all cols missing initially. If at least one
+    # entry is found for a column, then display it, otherwise ignore it.
+
+    existing_col = [0, 0, 0, 0, 0]
+
+    for j, row in enumerate(rows):
+        if j > 0:  # ignore header line here
+            for i, col in enumerate(row):
+                if col != '' and col is not None:
+                    existing_col[i] = 1
+
+    ncols = existing_col.count(1)
+    dtypes = ['t']*ncols
+
+    # remove empty cols (in-place removal)
+    rows[:] = [ [ col for i, col in enumerate(row) if existing_col[i] == 1 ] for row in rows ]
+
     table = tt.Texttable(max_width=console_width)
     table.set_deco(tt.Texttable.HEADER)
-    table.set_cols_dtype(['t', 't', 't'])
+    table.set_cols_dtype(dtypes)  # ['t', 't', 't', 't', 't'])
     table.add_rows(rows)
 
     print "List of jobs on UWS service for user: '%s'" % user_name
@@ -85,19 +105,40 @@ def list_jobs(url, user_name, password, phases, after=None, last=None):
 
 
 def _register_job_reference_for_table(rows, jobref):
-    if (jobref.reference.href is not None):
-        job_id = jobref.reference.href.rsplit("/", 1)[1]
-    else:
-        # The 'xlink:href' attribute is optional, an explicite link is not 
-        # required. Therefore, if no link is given, then assume that the 
-        # provided jobref-id from the short description is the same as the 
-        # unique job_id in these cases (otherwise one could NOT use the job 
-        # list to get the job_ids, which would not make any sense).
-        # See xml schema described in 
-        # http://www.ivoa.net/documents/UWS/20150626/PR-UWS-1.1-20150626.pdf): 
-        job_id = jobref.id
+    # The job reference contains the id of the job and a number of optional
+    # attributes. Display what is available.
+    # NOTE: Daiquiri's UWS-interface had used the table name as jobId and
+    # only provided the jobId with the href-reference. In order to still support
+    # these versions, check if jobref-id is the same as the href-id and display
+    # only the href-id, if they differ. Because this really MUST be the
+    # correct jobId.
 
-    rows.append([job_id, jobref.id, ', '.join(jobref.phase)])
+    cols = [jobref.id]
+
+    if (jobref.reference.href is not None):
+        href_jobid = jobref.reference.href.rsplit("/", 1)[1]
+        if href_jobid != jobref.id:
+            # replace id with href_jobid
+            cols[0] = href_jobid
+
+    if (jobref.runId is not None):
+        cols.append(jobref.runId)
+    else:
+        cols.append('')
+
+    if (jobref.ownerId is not None):
+        cols.append(jobref.ownerId)
+    else:
+        cols.append('')
+
+    if (jobref.creationTime is not None):
+        cols.append(jobref.creationTime)
+    else:
+        cols.append('')
+
+    cols.append(', '.join(jobref.phase))
+
+    rows.append(cols)
 
 
 @handle_error
@@ -283,6 +324,7 @@ def _print_job(job):
     table.add_rows(rows)
     print table.draw()
 
+
 # check validity of wait and phases:
 def _check_job_wait_args(arguments):
 
@@ -294,7 +336,7 @@ def _check_job_wait_args(arguments):
 
     if phase:
         if phase.upper() in UWS.models.JobPhases.active_phases:
-            phase = phase.upper();
+            phase = phase.upper()
         else:
             active_phases = ', '.join(UWS.models.JobPhases.active_phases)
             raise RuntimeError("Phase '" + phase + "' is not supported with WAIT keyword, choose one of the active phases: " + active_phases)
