@@ -110,7 +110,7 @@ ORDER BY log_mass
     def test(self):
         job = UWS.models.Job(self.xml)
 
-        job_str = "JobId : '335912448787925'\nRunId : 'None'\nOwnerId : 'adrian'\nPhase : 'COMPLETED'\nQuote : 'None'\nStartTime : '2014-06-03T15:33:30+02:00'\nEndTime : '2014-06-03T15:33:31+02:00'\nExecutionDuration : '30'\nDestruction : '2999-12-31T00:00:00+01:00'\nParameters :\nParameter id 'database' byRef: False is_post: False - value: cosmosim_user_adrian\nParameter id 'table' byRef: False is_post: False - value: 2014-06-03T15:33:29:4235\nParameter id 'query' byRef: False is_post: False - value: SELECT 0.25*(0.5+FLOOR(LOG10(Mvir)/0.25)) AS log_mass, COUNT(*) AS num\r\nFROM MDR1.BDMV\r\nWHERE snapnum=85 \r\nGROUP BY FLOOR(LOG10(Mvir)/0.25)\r\nORDER BY log_mass\n-- The query plan used to run this query: --\n--------------------------------------------\n--\n-- CALL paquExec('SELECT 0.25 * ( 0.5 + FLOOR( LOG10( `Mvir` ) / 0.25 ) ) AS `log_mass`,COUNT(*) AS `num`,FLOOR( LOG10( `Mvir` ) / 0.25 ) AS `_FLOOR_LOG10_Mvir_/_0__25_` FROM MDR1.BDMV WHERE ( `snapnum` = 85 )  GROUP BY FLOOR( LOG10( Mvir ) / 0.25 )  ', 'aggregation_tmp_75797262')\n-- USE spider_tmp_shard\n-- SET @i=0\n-- CREATE TABLE cosmosim_user_adrian.`2014-06-03T15:33:29:4235` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,  `log_mass`,SUM(`num`) AS `num`\r FROM `aggregation_tmp_75797262`  GROUP BY `_FLOOR_LOG10_Mvir_/_0__25_` ORDER BY `log_mass` ASC \n-- CALL paquDropTmp('aggregation_tmp_75797262')\n\nParameter id 'queue' byRef: False is_post: False - value: short\nResults :\nResult id 'csv' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/csv\nResult id 'votable.xml' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votable\nResult id 'votableB1.xml' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votableB1\nResult id 'votableB2.xml' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votableB2\nerrorSummary :\n False\njobInfo :\n"
+        job_str = "JobId : '335912448787925'\nRunId : 'None'\nOwnerId : 'adrian'\nPhase : 'COMPLETED'\nQuote : 'None'\nCreationTime : 'None'\nStartTime : '2014-06-03T15:33:30+02:00'\nEndTime : '2014-06-03T15:33:31+02:00'\nExecutionDuration : '30'\nDestruction : '2999-12-31T00:00:00+01:00'\nParameters :\nParameter id 'database' byRef: False is_post: False - value: cosmosim_user_adrian\nParameter id 'table' byRef: False is_post: False - value: 2014-06-03T15:33:29:4235\nParameter id 'query' byRef: False is_post: False - value: SELECT 0.25*(0.5+FLOOR(LOG10(Mvir)/0.25)) AS log_mass, COUNT(*) AS num\r\nFROM MDR1.BDMV\r\nWHERE snapnum=85 \r\nGROUP BY FLOOR(LOG10(Mvir)/0.25)\r\nORDER BY log_mass\n-- The query plan used to run this query: --\n--------------------------------------------\n--\n-- CALL paquExec('SELECT 0.25 * ( 0.5 + FLOOR( LOG10( `Mvir` ) / 0.25 ) ) AS `log_mass`,COUNT(*) AS `num`,FLOOR( LOG10( `Mvir` ) / 0.25 ) AS `_FLOOR_LOG10_Mvir_/_0__25_` FROM MDR1.BDMV WHERE ( `snapnum` = 85 )  GROUP BY FLOOR( LOG10( Mvir ) / 0.25 )  ', 'aggregation_tmp_75797262')\n-- USE spider_tmp_shard\n-- SET @i=0\n-- CREATE TABLE cosmosim_user_adrian.`2014-06-03T15:33:29:4235` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,  `log_mass`,SUM(`num`) AS `num`\r FROM `aggregation_tmp_75797262`  GROUP BY `_FLOOR_LOG10_Mvir_/_0__25_` ORDER BY `log_mass` ASC \n-- CALL paquDropTmp('aggregation_tmp_75797262')\n\nParameter id 'queue' byRef: False is_post: False - value: short\nResults :\nResult id 'csv' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/csv\nResult id 'votable.xml' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votable\nResult id 'votableB1.xml' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votableB1\nResult id 'votableB2.xml' reference: https://www.cosmosim.org/query/download/stream/table/2014-06-03T15%3A33%3A29%3A4235/format/votableB2\nerrorSummary :\n False\njobInfo :\n"
         self.assertEqual(str(job), job_str)
 
         self.assertEqual(job.job_id, '335912448787925')
@@ -209,7 +209,7 @@ class AbortedJobTest(unittest.TestCase):
     def test(self):
         job = UWS.models.Job(self.xml)
 
-        job_str = "JobId : '308893189727250'\nRunId : 'None'\nOwnerId : 'adrian'\nPhase : 'ABORTED'\nQuote : 'None'\nStartTime : '2014-06-02T10:14:25+02:00'\nEndTime : '2014-06-02T10:14:55+02:00'\nExecutionDuration : '30'\nDestruction : '2999-12-31T00:00:00+01:00'\nParameters :\nParameter id 'database' byRef: False is_post: False - value: cosmosim_user_adrian\nParameter id 'table' byRef: False is_post: False - value: 2014-06-02T10:14:25:1677\nParameter id 'query' byRef: False is_post: False - value: select count(*) from MDR1.Particles85 where x < 1\n-- The query plan used to run this query: --\n--------------------------------------------\n--\n-- CALL paquExec('SELECT COUNT(*) AS `_count_*_` FROM MDR1.Particles85 WHERE ( `x` < 1 )   ', 'aggregation_tmp_49645551')\n-- USE spider_tmp_shard\n-- SET @i=0\n-- CREATE TABLE cosmosim_user_adrian.`2014-06-02T10:14:25:1677` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,  SUM(`_count_*_`) AS `_count_*_`\r FROM `aggregation_tmp_49645551`   \n-- CALL paquDropTmp('aggregation_tmp_49645551')\n\nParameter id 'queue' byRef: False is_post: False - value: short\nResults :\nerrorSummary :\n False\njobInfo :\n"
+        job_str = "JobId : '308893189727250'\nRunId : 'None'\nOwnerId : 'adrian'\nPhase : 'ABORTED'\nQuote : 'None'\nCreationTime : 'None'\nStartTime : '2014-06-02T10:14:25+02:00'\nEndTime : '2014-06-02T10:14:55+02:00'\nExecutionDuration : '30'\nDestruction : '2999-12-31T00:00:00+01:00'\nParameters :\nParameter id 'database' byRef: False is_post: False - value: cosmosim_user_adrian\nParameter id 'table' byRef: False is_post: False - value: 2014-06-02T10:14:25:1677\nParameter id 'query' byRef: False is_post: False - value: select count(*) from MDR1.Particles85 where x < 1\n-- The query plan used to run this query: --\n--------------------------------------------\n--\n-- CALL paquExec('SELECT COUNT(*) AS `_count_*_` FROM MDR1.Particles85 WHERE ( `x` < 1 )   ', 'aggregation_tmp_49645551')\n-- USE spider_tmp_shard\n-- SET @i=0\n-- CREATE TABLE cosmosim_user_adrian.`2014-06-02T10:14:25:1677` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,  SUM(`_count_*_`) AS `_count_*_`\r FROM `aggregation_tmp_49645551`   \n-- CALL paquDropTmp('aggregation_tmp_49645551')\n\nParameter id 'queue' byRef: False is_post: False - value: short\nResults :\nerrorSummary :\n False\njobInfo :\n"
         self.assertEqual(str(job), job_str)
 
         self.assertEqual(job.job_id, '308893189727250')
@@ -291,7 +291,7 @@ class ErroredJobTest(unittest.TestCase):
     def test(self):
         job = UWS.models.Job(self.xml)
 
-        job_str = "JobId : '1177277256137938'\nRunId : 'None'\nOwnerId : 'adrian'\nPhase : 'ERROR'\nQuote : 'None'\nStartTime : '2014-05-09T15:13:48+02:00'\nEndTime : '2014-05-09T15:13:48+02:00'\nExecutionDuration : '30'\nDestruction : '2999-12-31T00:00:00+01:00'\nParameters :\nParameter id 'database' byRef: False is_post: False - value: cosmosim_user_adrian\nParameter id 'table' byRef: False is_post: False - value: 2014-05-09T15:13:50:6896\nParameter id 'query' byRef: False is_post: False - value: select avg(x) from `MDPL`.`Particles88tmp`;\n-- The query plan used to run this query: --\n--------------------------------------------\n--\n-- CALL paquExec('SELECT  COUNT(x) AS `cnt_avg(x)`, SUM(x) AS `sum_avg(x)` FROM `MDPL`.`Particles88tmp` ', 'aggregation_tmp_9424512')\n-- USE spider_tmp_shard\n-- SET @i=0\n-- CREATE TABLE cosmosim_user_adrian.`2014-05-09T15:13:50:6896` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,   (SUM(`sum_avg(x)`) / SUM(`cnt_avg(x)`)) AS `avg(x)`\r FROM `aggregation_tmp_9424512`   \n-- CALL paquDropTmp('aggregation_tmp_9424512')\n\nParameter id 'queue' byRef: False is_post: False - value: short\nResults :\nerrorSummary :\n Error Summary - type 'transient' hasDetail: False - message: Remote MySQL server has gone away\njobInfo :\n"
+        job_str = "JobId : '1177277256137938'\nRunId : 'None'\nOwnerId : 'adrian'\nPhase : 'ERROR'\nQuote : 'None'\nCreationTime : 'None'\nStartTime : '2014-05-09T15:13:48+02:00'\nEndTime : '2014-05-09T15:13:48+02:00'\nExecutionDuration : '30'\nDestruction : '2999-12-31T00:00:00+01:00'\nParameters :\nParameter id 'database' byRef: False is_post: False - value: cosmosim_user_adrian\nParameter id 'table' byRef: False is_post: False - value: 2014-05-09T15:13:50:6896\nParameter id 'query' byRef: False is_post: False - value: select avg(x) from `MDPL`.`Particles88tmp`;\n-- The query plan used to run this query: --\n--------------------------------------------\n--\n-- CALL paquExec('SELECT  COUNT(x) AS `cnt_avg(x)`, SUM(x) AS `sum_avg(x)` FROM `MDPL`.`Particles88tmp` ', 'aggregation_tmp_9424512')\n-- USE spider_tmp_shard\n-- SET @i=0\n-- CREATE TABLE cosmosim_user_adrian.`2014-05-09T15:13:50:6896` ENGINE=MyISAM SELECT @i:=@i+1 AS `row_id`,   (SUM(`sum_avg(x)`) / SUM(`cnt_avg(x)`)) AS `avg(x)`\r FROM `aggregation_tmp_9424512`   \n-- CALL paquDropTmp('aggregation_tmp_9424512')\n\nParameter id 'queue' byRef: False is_post: False - value: short\nResults :\nerrorSummary :\n Error Summary - type 'transient' hasDetail: False - message: Remote MySQL server has gone away\njobInfo :\n"
         self.assertEqual(str(job), job_str)
 
         self.assertEqual(job.job_id, '1177277256137938')
@@ -346,7 +346,7 @@ class JobListNamespaceTest(unittest.TestCase):
         self.xml = '''
 <?xml version="1.0" encoding="UTF-8"?>
 <jobs xmlns="http://www.ivoa.net/xml/UWS/v1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <jobref id="2014-06-03T15:33:29:4235" xlink:href="https://www.cosmosim.org/uws/query/335912448787925" xlink:type="simple">
+  <jobref id="335912448787925" xlink:href="https://www.cosmosim.org/uws/query/335912448787925" xlink:type="simple">
     <phase>COMPLETED</phase>
   </jobref>
 </jobs>
@@ -357,21 +357,22 @@ class JobListNamespaceTest(unittest.TestCase):
 
         self.assertEqual(len(job_list.job_reference), 1)
 
-        job_list_str = "Job '2014-06-03T15:33:29:4235' in phase 'COMPLETED' - https://www.cosmosim.org/uws/query/335912448787925\n"
+        job_list_str = "Job '335912448787925' in phase 'COMPLETED' - https://www.cosmosim.org/uws/query/335912448787925\n"
         self.assertEqual(str(job_list), job_list_str)
 
         job1 = job_list.job_reference[0]
-        self.assertEqual(job1.id, '2014-06-03T15:33:29:4235')
+        self.assertEqual(job1.id, '335912448787925')
         self.assertEqual(job1.phase, ['COMPLETED'])
         self.assertEqual(job1.reference.type, "simple")
         self.assertEqual(job1.reference.href, "https://www.cosmosim.org/uws/query/335912448787925")
+
 
 class JobListNamespace2Test(JobListNamespaceTest):
     def setUp(self):
         self.xml = '''
 <?xml version="1.0" encoding="UTF-8"?>
 <u:jobs xmlns:u="http://www.ivoa.net/xml/UWS/v1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <u:jobref id="2014-06-03T15:33:29:4235" xlink:href="https://www.cosmosim.org/uws/query/335912448787925" xlink:type="simple">
+  <u:jobref id="335912448787925" xlink:href="https://www.cosmosim.org/uws/query/335912448787925" xlink:type="simple">
     <u:phase>COMPLETED</u:phase>
   </u:jobref>
 </u:jobs>

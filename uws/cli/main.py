@@ -79,7 +79,6 @@ def list_jobs(url, user_name, password, phases, after=None, last=None):
 
     # Set existing_col to 0, i.e. all cols missing initially. If at least one
     # entry is found for a column, then display it, otherwise ignore it.
-
     existing_col = [0, 0, 0, 0, 0]
 
     for j, row in enumerate(rows):
@@ -283,8 +282,8 @@ def _print_job(job):
     rows = [["Field", "Value"]]
     rows.append(["Job id", job.job_id])
 
-    if(job.run_id):
-        rows.append(["Run id", job.run_id])
+    rows.append(["Run id", job.run_id])
+    
     if(job.owner_id):
         rows.append(["Owner id", job.owner_id])
 
@@ -292,6 +291,7 @@ def _print_job(job):
 
     if(job.quote):
         rows.append(["Quote", job.quote])
+    
     if(job.creation_time):
         rows.append(["Creation time", job.creation_time])
 
