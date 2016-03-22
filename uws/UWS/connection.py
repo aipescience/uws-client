@@ -78,7 +78,7 @@ class Connection(object):
             raise RuntimeError('Resource does not exist')
 
         if response.status != 200:
-            raise RuntimeError('Error while connection to server: Got response: %s %s' % (response.status, response.reason))
+            raise RuntimeError('Error with connection to server: Got response: %s %s' % (response.status, response.reason))
 
         return response
 
@@ -126,7 +126,7 @@ class Connection(object):
             raise RuntimeError('Resource does not exist')
 
         if response.status != 200:
-            raise RuntimeError('Error while connection to server: Got response: %s %s' % (response.status, response.reason))
+            raise RuntimeError('Error with connection to server: Got response: %s %s' % (response.status, response.reason))
 
         return response
 
@@ -167,7 +167,7 @@ class Connection(object):
             raise RuntimeError('Resource does not exist')
 
         if response.status != 200:
-            raise RuntimeError('Error while connection to server: Got response: %s %s' % (response.status, response.reason))
+            raise RuntimeError('Error with connection to server: Got response: %s %s' % (response.status, response.reason))
 
         return response
 
