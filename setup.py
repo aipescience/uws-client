@@ -10,7 +10,7 @@ install_requires = [
     "pytz"
 ]
 
-version = "1.1.5"
+version = "1.1.7"
 
 setup(
     name='uws-client',
