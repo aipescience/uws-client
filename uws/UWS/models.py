@@ -5,13 +5,14 @@ uws_1_namespace = "http://www.ivoa.net/xml/UWS/v1.0"
 #uws_2_namespace = "http://www.ivoa.net/xml/UWS/v2.0"
 xlink_namespace = "http://www.w3.org/1999/xlink"
 
-class UWS1Flavour(object): 
+
+class UWS1Flavour(object):
     def __init__(self, namespaces=None):
 
         if uws_1_namespace not in namespaces.values():
             raise RuntimeError("No supported UWS namespace found in xml-response, cannot parse xml.")
 
-        # prepend each element's name with the correct uws-namespace 
+        # prepend each element's name with the correct uws-namespace
         # for this version
         self.uws_namespace = uws_1_namespace
         self.jobs = et.QName(self.uws_namespace, "jobs")
@@ -21,6 +22,7 @@ class UWS1Flavour(object):
         self.runId = et.QName(self.uws_namespace, "runId")
         self.ownerId = et.QName(self.uws_namespace, "ownerId")
         self.quote = et.QName(self.uws_namespace, "quote")
+        self.creationTime = et.QName(self.uws_namespace, "creationTime")
         self.startTime = et.QName(self.uws_namespace, "startTime")
         self.endTime = et.QName(self.uws_namespace, "endTime")
         self.executionDuration = et.QName(self.uws_namespace, "executionDuration")
@@ -129,12 +131,18 @@ class JobRef(BaseUWSModel):
         self.reference = Reference()
         self.phase = []
 
-        if xml_node is not None:
+        if xml_node is not None:  # When should this ever be None?????
             self.id = xml_node.get('id')
 
             # UWS standard defines array, therefore treat phase as array
+            # (... actually it does not, but keep it anyway like this, maybe at
+            # some point in the future all phases of a job are provided as list)
             self.phase = [elm.text for elm in xml_node.findall(uws_flavour.phase)]
             self.reference = Reference(xml_node=xml_node, xml_namespace=xml_namespace)
+            self.runId = xml_node.get('runId')
+            self.ownerId = xml_node.get('ownerId')
+            self.creationTime = xml_node.get('creationTime')
+
         elif id is not None and phase is not None and reference is not None:
             self.id = id
 
@@ -194,6 +202,7 @@ class Job(BaseUWSModel):
         self.owner_id = None
         self.phase = ["PENDING"]
         self.quote = None
+        self.creation_time = None
         self.start_time = None
         self.end_time = None
         self.execution_duration = 0
@@ -216,10 +225,10 @@ class Job(BaseUWSModel):
             self.job_id = parsed.find(uws_flavour.jobId).text
 
             self.run_id = self._get_optional(parsed, uws_flavour.runId)
-
             self.owner_id = parsed.find(uws_flavour.ownerId).text
             self.phase = [parsed.find(uws_flavour.phase).text]
             self.quote = self._get_optional(parsed, uws_flavour.quote)
+            self.creation_time = self._get_optional(parsed, uws_flavour.creationTime)
             self.start_time = parsed.find(uws_flavour.startTime).text
             self.end_time = parsed.find(uws_flavour.endTime).text
             self.execution_duration = int(parsed.find(uws_flavour.executionDuration).text)
@@ -255,6 +264,7 @@ class Job(BaseUWSModel):
         str += "OwnerId : '%s'\n" % self.owner_id
         str += "Phase : '%s'\n" % ', '.join(self.phase)
         str += "Quote : '%s'\n" % self.quote
+        str += "CreationTime : '%s'\n" % self.creation_time
         str += "StartTime : '%s'\n" % self.start_time
         str += "EndTime : '%s'\n" % self.end_time
         str += "ExecutionDuration : '%s'\n" % self.execution_duration
