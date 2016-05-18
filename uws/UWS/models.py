@@ -222,17 +222,16 @@ class Job(BaseUWSModel):
             if parsed.get("version"):
                 self.version = parsed.get("version")
 
-            self.job_id = parsed.find(uws_flavour.jobId).text
-
-            self.run_id = self._get_optional(parsed, uws_flavour.runId)
-            self.owner_id = parsed.find(uws_flavour.ownerId).text
-            self.phase = [parsed.find(uws_flavour.phase).text]
-            self.quote = self._get_optional(parsed, uws_flavour.quote)
+            self.job_id        = self._get_mandatory(parsed, uws_flavour.jobId)
+            self.run_id        = self._get_optional(parsed, uws_flavour.runId)
+            self.owner_id      = self._get_optional(parsed, uws_flavour.ownerId)
+            self.phase         = [self._get_mandatory(parsed, uws_flavour.phase)]
+            self.quote         = self._get_optional(parsed, uws_flavour.quote)
             self.creation_time = self._get_optional(parsed, uws_flavour.creationTime)
-            self.start_time = parsed.find(uws_flavour.startTime).text
-            self.end_time = parsed.find(uws_flavour.endTime).text
-            self.execution_duration = int(parsed.find(uws_flavour.executionDuration).text)
-            self.destruction = parsed.find(uws_flavour.destruction).text
+            self.start_time    = self._get_mandatory(parsed, uws_flavour.startTime)
+            self.end_time      = self._get_mandatory(parsed, uws_flavour.endTime)
+            self.execution_duration = int(self._get_mandatory(parsed, uws_flavour.executionDuration))
+            self.destruction   = self._get_mandatory(parsed, uws_flavour.destruction)
 
             self.parameters = []
             tmp = parsed.find(uws_flavour.parameters)
@@ -303,7 +302,7 @@ class Job(BaseUWSModel):
         self.results.append(result)
 
     def _get_optional(self, parsed, element_name):
-        """returns the text value of element_name within the parsed elementTree.
+        """Returns the text value of element_name within the parsed elementTree.
 
         If element_name doesn't exist, return None.
         """
@@ -312,6 +311,16 @@ class Job(BaseUWSModel):
             return None
         else:
             return option.text
+
+
+    def _get_mandatory(self, parsed, element_name):
+        """Check if the element exists, return text or error"""
+
+        element = parsed.find(element_name)
+        if element is None:
+            raise RuntimeError("Mandatory element ", element_name.text, " could not be found in xml-response.")
+        else:
+            return element.text
 
 
 class Parameter(BaseUWSModel):
