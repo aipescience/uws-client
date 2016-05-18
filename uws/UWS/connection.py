@@ -53,7 +53,7 @@ class Connection(object):
 
         response = self.connection.getresponse()
 
-        if response.status == 302:
+        if response.status == 302 or response.status == 303:
             # found - redirect
             location = response.getheader("location")
             new_base_path = location.replace(path, '').lstrip("/")
