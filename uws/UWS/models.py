@@ -312,7 +312,6 @@ class Job(BaseUWSModel):
         else:
             return option.text
 
-
     def _get_mandatory(self, parsed, element_name):
         """Check if the element exists, return text or error"""
 
