@@ -119,7 +119,7 @@ class Client(object):
 
         try:
             response = self.connection.get(id, params)
-        except:
+        except Exception as e:
             # Do not make a second request without params, throw error
             # immediately
             raise UWSError(str(e))
