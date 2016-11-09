@@ -161,7 +161,7 @@ class Client(object):
 
         return result
 
-    def set_params_job(self, id, args={}):
+    def set_parameters_job(self, id, args={}):
         try:
             response = self.connection.post(id, args)
         except Exception as e:
