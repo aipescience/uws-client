@@ -39,7 +39,7 @@ def list_jobs(url, user_name, password, phases, after=None, last=None):
     if last:
         filters['last'] = last
 
-    jobs = uws_client.get_job_list(filters)
+    jobs = uws_client.get_job_list(filters=filters)
 
     job_phases = UWS.models.JobPhases
 

@@ -16,7 +16,7 @@ class Client(object):
         else:
             self.connection = UWSConnection.Connection(url, user, password)
 
-    def get_job_list(self, filters):
+    def get_job_list(self, filters=None):
         params = None
         if filters:
             params = self._validate_and_parse_filters(filters)
