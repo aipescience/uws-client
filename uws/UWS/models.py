@@ -160,7 +160,10 @@ class JobRef(BaseUWSModel):
         self.phase = [new_phase]
 
     def __unicode__(self):
-        return "Job '%s' in phase '%s' created at '%s' - %s" % (self.id, ', '.join(self.phase), self.creationTime, unicode(self.reference))
+        if self.creationTime is not None:
+            return "Job '%s' in phase '%s' created at '%s' - %s" % (self.id, ', '.join(self.phase), self.creationTime, unicode(self.reference))
+        else:
+            return "Job '%s' in phase '%s' - %s" % (self.id, ', '.join(self.phase), unicode(self.reference))
 
     def __str__(self):
         return unicode(self).encode('utf-8')
