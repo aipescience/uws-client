@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
-import httplib
-import urllib
-import urllib2
+try:
+    import httplib
+except ImportError:
+    import http.client as httplib
+try:
+    import urllib2
+    import urllib
+    from urlparse import urlparse
+except ImportError:
+    import urllib.request as urllib2
+    import urllib.parse as urllib
+    from urllib.parse import urlparse
 import base64
-
-from urlparse import urlparse
 
 
 class Connection(object):
@@ -12,9 +19,12 @@ class Connection(object):
         self._set_url(url)
 
         if user is not None and password is not None:
-            self.auth_string = base64.encodestring('%s:%s' % (user, password))
-            self.auth_string = self.auth_string.replace('\n', '')
-            self.headers = {"Authorization": "Basic %s" % self.auth_string}
+            auth_string = '%s:%s' % (user.decode('utf-8'),
+                                     password.decode('utf-8'))
+            self.auth_string = base64.encodestring(auth_string.encode())
+            self.headers = {"Authorization":
+                            ("Basic %s" %
+                                self.auth_string.decode('utf-8')).strip('\n')}
         else:
             self.headers = {}
 
