@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+
 from lxml import etree as et
 
 uws_1_namespace = "http://www.ivoa.net/xml/UWS/v1.0"
@@ -193,7 +195,8 @@ class Reference(BaseUWSModel):
         return self.href
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return str(self.href)
+        #  return unicode(self).encode('utf-8')
 
 
 class Job(BaseUWSModel):
