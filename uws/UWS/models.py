@@ -110,11 +110,12 @@ class Jobs(BaseUWSModel):
     def __unicode__(self):
         str = ""
         for job in self.job_reference:
-            str += unicode(job) + "\n"
+            str += str(job) + "\n"
         return str
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return str(self.__unicode__())
+        #  return unicode(self).encode('utf-8')
 
     def add_job(self, id=None, href=None, phase=None, job=None):
         if job is not None:
@@ -163,12 +164,13 @@ class JobRef(BaseUWSModel):
 
     def __unicode__(self):
         if self.creationTime is not None:
-            return "Job '%s' in phase '%s' created at '%s' - %s" % (self.id, ', '.join(self.phase), self.creationTime, unicode(self.reference))
+            return "Job '%s' in phase '%s' created at '%s' - %s" % (self.id, ', '.join(self.phase), self.creationTime, str(self.reference))
         else:
-            return "Job '%s' in phase '%s' - %s" % (self.id, ', '.join(self.phase), unicode(self.reference))
+            return "Job '%s' in phase '%s' - %s" % (self.id, ', '.join(self.phase), str(self.reference))
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return str(self.__unicode__())
+        #  return unicode(self).encode('utf-8')
 
 
 class Reference(BaseUWSModel):
@@ -195,7 +197,7 @@ class Reference(BaseUWSModel):
         return self.href
 
     def __str__(self):
-        return str(self.href)
+        return str(self.__unicode__())
         #  return unicode(self).encode('utf-8')
 
 
@@ -264,35 +266,36 @@ class Job(BaseUWSModel):
                 self.job_info = list(tmp)
 
     def __unicode__(self):
-        str = "JobId : '%s'\n" % self.job_id
-        str += "RunId : '%s'\n" % self.run_id
-        str += "OwnerId : '%s'\n" % self.owner_id
-        str += "Phase : '%s'\n" % ', '.join(self.phase)
-        str += "Quote : '%s'\n" % self.quote
-        str += "CreationTime : '%s'\n" % self.creation_time
-        str += "StartTime : '%s'\n" % self.start_time
-        str += "EndTime : '%s'\n" % self.end_time
-        str += "ExecutionDuration : '%s'\n" % self.execution_duration
-        str += "Destruction : '%s'\n" % self.destruction
+        strng = "JobId : '%s'\n" % self.job_id
+        strng += "RunId : '%s'\n" % self.run_id
+        strng += "OwnerId : '%s'\n" % self.owner_id
+        strng += "Phase : '%s'\n" % ', '.join(self.phase)
+        strng += "Quote : '%s'\n" % self.quote
+        strng += "CreationTime : '%s'\n" % self.creation_time
+        strng += "StartTime : '%s'\n" % self.start_time
+        strng += "EndTime : '%s'\n" % self.end_time
+        strng += "ExecutionDuration : '%s'\n" % self.execution_duration
+        strng += "Destruction : '%s'\n" % self.destruction
 
-        str += "Parameters :\n"
+        strng += "Parameters :\n"
         for param in self.parameters:
-            str += "%s\n" % unicode(param)
+            strng += "%s\n" % str(param)
 
-        str += "Results :\n"
+        strng += "Results :\n"
         for res in self.results:
-            str += "%s\n" % unicode(res)
+            strng += "%s\n" % str(res)
 
-        str += "errorSummary :\n %s\n" % unicode(self.error_summary)
+        strng += "errorSummary :\n %s\n" % str(self.error_summary)
 
-        str += "jobInfo :\n"
+        strng += "jobInfo :\n"
         for info in self.job_info:
-            str += "%s\n" % unicode(info)
+            strng += "%s\n" % str(info)
 
-        return str
+        return strng
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return str(self.__unicode__())
+        #  return unicode(self).encode('utf-8')
 
     def add_parameter(self, id=None, by_reference=False, is_post=False, value=None, parameter=None):
         if not parameter:
@@ -352,7 +355,8 @@ class Parameter(BaseUWSModel):
         return "Parameter id '%s' byRef: %s is_post: %s - value: %s" % (self.id, self.by_reference, self.is_post, self.value)
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return str(self.__unicode__())
+        #  return unicode(self).encode('utf-8')
 
 
 class Result(BaseUWSModel):
@@ -374,10 +378,11 @@ class Result(BaseUWSModel):
                 raise RuntimeError("Malformated reference given in result id: %s" % id)
 
     def __unicode__(self):
-        return "Result id '%s' reference: %s" % (self.id, unicode(self.reference))
+        return "Result id '%s' reference: %s" % (self.id, str(self.reference))
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return str(self.href)
+        #  return unicode(self).encode('utf-8')
 
 
 class ErrorSummary(BaseUWSModel):
@@ -408,4 +413,5 @@ class ErrorSummary(BaseUWSModel):
         return "Error Summary - type '%s' hasDetail: %s - message: %s" % (self.type, self.has_detail, "\n".join(self.messages))
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return str(self.href)
+        #  return unicode(self).encode('utf-8')
