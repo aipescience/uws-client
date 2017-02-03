@@ -23,7 +23,7 @@ You might need to install the headers of the xml libraries for your system. e.g 
 apt-get install libxml2-dev libxslt1-dev python-dev
 ```
 
-Then install the python package using pip:
+Then install the python packages using pip:
 
 ```
 cd uws-client
@@ -51,6 +51,8 @@ You can then run the unittests using nosetests:
 cd uws
 nosetests .
 ```
+
+If you use MacOS, be aware that pip may install the *nosetests* executable into `/usr/local/bin/` or similar, which may not be in your $PATH. You can use e.g. `find / -name 'nosetests'` for discovering your executable. (If you cannot find it, make sure that the `nose`-module really is installed.)
 
 Generic usage of the uws client:
 --------------------------------
