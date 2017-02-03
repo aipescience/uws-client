@@ -23,6 +23,8 @@ You might need to install the headers of the xml libraries for your system. e.g 
 apt-get install libxml2-dev libxslt1-dev python-dev
 ```
 
+MacOS users may need to install `macports` and/or some other software first.
+
 Then install the python packages using pip:
 
 ```
