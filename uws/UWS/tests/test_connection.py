@@ -12,11 +12,19 @@ class ConnectionTest(unittest.TestCase):
             password="admin"
         )
 
-        self.assertEqual(connection.auth_string, "YWRtaW46YWRtaW4=\n")
+        try:
+            auth_string = connection.auth_string.decode().strip('\n')
+        except AttributeError:
+            pass
+
+        self.assertEqual(auth_string, "YWRtaW46YWRtaW4=")
         self.assertDictEqual(connection.headers, {'Authorization': 'Basic YWRtaW46YWRtaW4='})
 
     def testSetURLHTTP(self):
-        import httplib
+        try:
+            import httplib
+        except ImportError:
+            import http.client as httplib
 
         connection = UWS.connection.Connection(
             "http://www.example.com/uws/",
@@ -30,7 +38,10 @@ class ConnectionTest(unittest.TestCase):
         self.assertIsInstance(connection.connection, httplib.HTTPConnection)
 
     def testSetURLHTTPS(self):
-        import httplib
+        try:
+            import httplib
+        except ImportError:
+            import http.client as httplib
 
         connection = UWS.connection.Connection(
             "https://www.example.com/uws/",

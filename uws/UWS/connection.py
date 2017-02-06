@@ -19,8 +19,12 @@ class Connection(object):
         self._set_url(url)
 
         if user is not None and password is not None:
-            auth_string = '%s:%s' % (user.decode('utf-8'),
-                                     password.decode('utf-8'))
+            try: 
+                user = user.decode('utf-8')
+                password = password.decode('utf-8')
+            except AttributeError:
+                pass
+            auth_string = '%s:%s' % (user, password)
             self.auth_string = base64.encodestring(auth_string.encode())
             self.headers = {"Authorization":
                             ("Basic %s" %

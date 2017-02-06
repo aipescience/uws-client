@@ -223,6 +223,11 @@ class Job(BaseUWSModel):
         if xml is not None:
             # parse xml
             #  parsed = et.fromstring(xml)
+            try:
+                xml = xml.decode()
+            except AttributeError:
+                pass
+
             parsed = et.fromstring(xml.encode('utf-8'))
 
             # again find proper UWS namespace-string as prefix for search paths in find
