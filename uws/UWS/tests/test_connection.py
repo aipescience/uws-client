@@ -12,7 +12,7 @@ class ConnectionTest(unittest.TestCase):
             password="admin"
         )
 
-        self.assertEqual(connection.auth_string, "YWRtaW46YWRtaW4=")
+        self.assertEqual(connection.auth_string, "YWRtaW46YWRtaW4=\n")
         self.assertDictEqual(connection.headers, {'Authorization': 'Basic YWRtaW46YWRtaW4='})
 
     def testSetURLHTTP(self):
