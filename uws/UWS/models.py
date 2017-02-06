@@ -88,7 +88,6 @@ class Jobs(BaseUWSModel):
 
         if xml is not None:
             # parse xml
-            #  parsed = et.fromstring(xml)
             parsed = et.fromstring(xml.encode('utf-8'))
 
             uws_flavour = UWS1Flavour(parsed.nsmap)
@@ -170,7 +169,6 @@ class JobRef(BaseUWSModel):
 
     def __str__(self):
         return str(self.__unicode__())
-        #  return unicode(self).encode('utf-8')
 
 
 class Reference(BaseUWSModel):
@@ -198,7 +196,6 @@ class Reference(BaseUWSModel):
 
     def __str__(self):
         return str(self.__unicode__())
-        #  return unicode(self).encode('utf-8')
 
 
 class Job(BaseUWSModel):
@@ -222,7 +219,6 @@ class Job(BaseUWSModel):
 
         if xml is not None:
             # parse xml
-            #  parsed = et.fromstring(xml)
             try:
                 xml = xml.decode()
             except AttributeError:
@@ -362,7 +358,6 @@ class Parameter(BaseUWSModel):
 
     def __str__(self):
         return str(self.__unicode__())
-        #  return unicode(self).encode('utf-8')
 
 
 class Result(BaseUWSModel):
@@ -388,7 +383,6 @@ class Result(BaseUWSModel):
 
     def __str__(self):
         return str(self.__unicode__())
-        #  return unicode(self).encode('utf-8')
 
 
 class ErrorSummary(BaseUWSModel):
@@ -420,4 +414,3 @@ class ErrorSummary(BaseUWSModel):
 
     def __str__(self):
         return str(self.__unicode__())
-        #  return unicode(self).encode('utf-8')
