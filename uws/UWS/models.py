@@ -108,10 +108,10 @@ class Jobs(BaseUWSModel):
             self.job_reference = []
 
     def __unicode__(self):
-        str = ""
+        strng = ""
         for job in self.job_reference:
-            str += str(job) + "\n"
-        return str
+            strng += str(job) + "\n"
+        return strng
 
     def __str__(self):
         return str(self.__unicode__())
