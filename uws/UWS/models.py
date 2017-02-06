@@ -381,7 +381,7 @@ class Result(BaseUWSModel):
         return "Result id '%s' reference: %s" % (self.id, str(self.reference))
 
     def __str__(self):
-        return str(self.href)
+        return str(self.__unicode__())
         #  return unicode(self).encode('utf-8')
 
 
@@ -413,5 +413,5 @@ class ErrorSummary(BaseUWSModel):
         return "Error Summary - type '%s' hasDetail: %s - message: %s" % (self.type, self.has_detail, "\n".join(self.messages))
 
     def __str__(self):
-        return str(self.href)
+        return str(self.__unicode__())
         #  return unicode(self).encode('utf-8')
