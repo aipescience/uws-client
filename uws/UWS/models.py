@@ -80,7 +80,6 @@ class BaseUWSModel(object):
             return False
         return value
 
-
 class Jobs(BaseUWSModel):
     def __init__(self, xml=None):
         super(Jobs, self).__init__()
@@ -89,7 +88,8 @@ class Jobs(BaseUWSModel):
 
         if xml is not None:
             # parse xml
-            parsed = et.fromstring(xml)
+            #  parsed = et.fromstring(xml)
+            parsed = et.fromstring(xml.encode('utf-8'))
 
             uws_flavour = UWS1Flavour(parsed.nsmap)
 
@@ -222,7 +222,8 @@ class Job(BaseUWSModel):
 
         if xml is not None:
             # parse xml
-            parsed = et.fromstring(xml)
+            #  parsed = et.fromstring(xml)
+            parsed = et.fromstring(xml.encode('utf-8'))
 
             # again find proper UWS namespace-string as prefix for search paths in find
             uws_flavour = UWS1Flavour(parsed.nsmap)
