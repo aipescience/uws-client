@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from lxml.etree import XMLSyntaxError as XMLSyntaxError
 
-import connection as UWSConnection
-import models
-from errors import UWSError
+#import connection as UWSConnection
+#import models
+#from errors import UWSError
+
+from . import connection as UWSConnection
+from . import models
+from .errors import UWSError
 from datetime import datetime
 import dateutil.parser
 import pytz
@@ -70,7 +74,7 @@ class Client(object):
                 # given (e.g. '2010-09'->'2010-09-06').
                 # Let's tell the user how the given value was interpreted:
                 if str(date) != str(after):
-                    print "Note: Changed value for keyword 'after' from '%s' to '%s'." % (after, str(date))
+                    print("Note: Changed value for keyword 'after' from '%s' to '%s'." % (after, str(date)))
 
             except:
                 raise UWSError("Date time format could not be parsed, expecting UTC in ISO 8601:2004 format or compatible: %s" % (str(after)))
@@ -79,7 +83,7 @@ class Client(object):
             if date.utcoffset() is not None:
                 utz = pytz.timezone('UTC')
                 date = date.astimezone(utz).replace(tzinfo=None)
-                print "Note: Date time was converted to UTC time: %s" % (str(date))
+                print("Note: Date time was converted to UTC time: %s" % (str(date)))
 
             date = date.isoformat()
             params.append(("AFTER", date))

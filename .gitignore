@@ -9,3 +9,5 @@ uws_client.egg-info
 
 .coverage
 cover
+test
+build
